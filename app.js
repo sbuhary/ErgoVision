@@ -32,6 +32,10 @@ const volumeSlider = document.querySelector("#volumeSlider");
 const volumeValue = document.querySelector("#volumeValue");
 const resetCalibrationButton = document.querySelector("#resetCalibrationButton");
 const resetSettingsButton = document.querySelector("#resetSettingsButton");
+const breakToggle = document.querySelector("#breakToggle");
+const breakSlider = document.querySelector("#breakSlider");
+const breakValue = document.querySelector("#breakValue");
+const breakStatus = document.querySelector("#breakStatus");
 const modelStatus = document.querySelector("#modelStatus");
 const stageEmpty = document.querySelector("#stageEmpty");
 const scoreValue = document.querySelector("#scoreValue");
@@ -83,6 +87,8 @@ let lastBeepAt = 0;
 let wasBelowAlertThreshold = false;
 let alertBeganAt = 0;
 let audioContext;
+let breakStartedAt = Date.now();
+let breakAlerted = false;
 const sessionStats = {
   lastAt: 0,
   goodMs: 0,
@@ -119,14 +125,14 @@ calibrateButton.addEventListener("click", () => {
   cueText.textContent = "Calibration saved. Return to this upright seated position when alerts appear.";
 });
 
-[thresholdSlider, delaySlider, intervalSlider, volumeSlider].forEach((control) => {
+[thresholdSlider, delaySlider, intervalSlider, volumeSlider, breakSlider].forEach((control) => {
   control.addEventListener("input", () => {
     syncSettingsLabels();
     saveState();
   });
 });
 
-[soundToggle, hideVideoToggle, soundPattern, sensitivitySelect].forEach((control) => {
+[soundToggle, hideVideoToggle, soundPattern, sensitivitySelect, breakToggle].forEach((control) => {
   control.addEventListener("change", () => {
     applyPrivacyMode();
     saveState();
@@ -150,6 +156,9 @@ resetSettingsButton.addEventListener("click", () => {
   delaySlider.value = "3";
   intervalSlider.value = "4";
   volumeSlider.value = "35";
+  breakToggle.value = "off";
+  breakSlider.value = "45";
+  resetBreakReminder();
   Object.values(metricControls).forEach((control) => {
     control.checked = true;
   });
@@ -482,6 +491,8 @@ function syncSettingsLabels() {
   thresholdValue.textContent = thresholdSlider.value;
   intervalValue.textContent = `${Number(intervalSlider.value).toFixed(1)}s`;
   volumeValue.textContent = `${volumeSlider.value}%`;
+  breakValue.textContent = `${breakSlider.value}m`;
+  updateBreakReminder();
 }
 
 function loadSavedState() {
@@ -494,6 +505,10 @@ function loadSavedState() {
     if (saved.threshold) thresholdSlider.value = saved.threshold;
     if (saved.interval) intervalSlider.value = saved.interval;
     if (saved.volume) volumeSlider.value = saved.volume;
+    if (saved.breakEnabled) breakToggle.value = saved.breakEnabled;
+    if (saved.breakMinutes) breakSlider.value = saved.breakMinutes;
+    if (saved.breakStartedAt) breakStartedAt = saved.breakStartedAt;
+    if (saved.breakAlerted != null) breakAlerted = Boolean(saved.breakAlerted);
     if (saved.enabledMetrics) {
       Object.entries(metricControls).forEach(([key, control]) => {
         if (saved.enabledMetrics[key] != null) {
@@ -521,6 +536,10 @@ function saveState() {
     threshold: thresholdSlider.value,
     interval: intervalSlider.value,
     volume: volumeSlider.value,
+    breakEnabled: breakToggle.value,
+    breakMinutes: breakSlider.value,
+    breakStartedAt,
+    breakAlerted,
     enabledMetrics: Object.fromEntries(
       Object.entries(metricControls).map(([key, control]) => [key, control.checked]),
     ),
@@ -682,4 +701,40 @@ function formatDuration(ms) {
   const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
   const seconds = String(totalSeconds % 60).padStart(2, "0");
   return `${minutes}:${seconds}`;
+}
+setInterval(updateBreakReminder, 1000);
+
+function resetBreakReminder() {
+  breakStartedAt = Date.now();
+  breakAlerted = false;
+  saveState();
+  updateBreakReminder();
+}
+
+function updateBreakReminder() {
+  if (!breakStatus) return;
+
+  if (breakToggle.value !== "on") {
+    breakStatus.textContent = "Break reminders off";
+    return;
+  }
+
+  const intervalMs = Number(breakSlider.value) * 60 * 1000;
+  const elapsed = Date.now() - breakStartedAt;
+  const remaining = intervalMs - elapsed;
+
+  if (remaining <= 0) {
+    breakStatus.textContent = "Break due now";
+    if (!breakAlerted) {
+      breakAlerted = true;
+      alertPanel.className = "alert-panel warn";
+      alertTitle.textContent = "Break due";
+      alertCopy.textContent = "Stand, stretch, and look away from the screen for a short break.";
+      cueText.textContent = "Break due. Reset the reminder after you return.";
+      saveState();
+    }
+    return;
+  }
+
+  breakStatus.textContent = `Next break in ${formatDuration(remaining)}`;
 }

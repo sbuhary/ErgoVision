@@ -149,7 +149,19 @@
             <span>Volume <output id="volumeValue">35%</output></span>
             <input id="volumeSlider" type="range" min="0" max="100" value="35" />
           </label>
-          <div class="settings-actions">
+                    <label>
+            <span>Break reminder</span>
+            <select id="breakToggle">
+              <option value="off">Off</option>
+              <option value="on">On</option>
+            </select>
+          </label>
+          <label>
+            <span>Break every <output id="breakValue">45m</output></span>
+            <input id="breakSlider" type="range" min="15" max="90" step="5" value="45" />
+          </label>
+          <p class="settings-note" id="breakStatus">Break reminders off</p>
+<div class="settings-actions">
             <button id="resetCalibrationButton" type="button">Reset calibration</button>
             <button id="resetSettingsButton" type="button">Reset settings</button>
           </div>
