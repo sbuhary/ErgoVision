@@ -25,6 +25,8 @@ const intervalSlider = document.querySelector("#intervalSlider");
 const intervalValue = document.querySelector("#intervalValue");
 const volumeSlider = document.querySelector("#volumeSlider");
 const volumeValue = document.querySelector("#volumeValue");
+const resetCalibrationButton = document.querySelector("#resetCalibrationButton");
+const resetSettingsButton = document.querySelector("#resetSettingsButton");
 const modelStatus = document.querySelector("#modelStatus");
 const stageEmpty = document.querySelector("#stageEmpty");
 const scoreValue = document.querySelector("#scoreValue");
@@ -101,6 +103,31 @@ calibrateButton.addEventListener("click", () => {
 
 [soundToggle, soundPattern].forEach((control) => {
   control.addEventListener("change", saveState);
+});
+
+resetCalibrationButton.addEventListener("click", () => {
+  calibration = undefined;
+  saveState();
+  cueText.textContent = "Calibration reset. Sit upright and calibrate again when ready.";
+  if (lastMetrics) updateUi(lastMetrics);
+});
+
+resetSettingsButton.addEventListener("click", () => {
+  localStorage.removeItem(STORAGE_KEY);
+  soundToggle.checked = false;
+  soundPattern.value = "single";
+  thresholdSlider.value = "60";
+  intervalSlider.value = "4";
+  volumeSlider.value = "35";
+  Object.values(metricControls).forEach((control) => {
+    control.checked = true;
+  });
+  calibration = undefined;
+  syncSettingsLabels();
+  updateMetricAvailability();
+  saveState();
+  cueText.textContent = "Settings reset. Calibrate from your upright seated posture when ready.";
+  if (lastMetrics) updateUi(lastMetrics);
 });
 
 Object.values(metricControls).forEach((control) => {
