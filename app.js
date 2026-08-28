@@ -40,6 +40,10 @@ const alertPanel = document.querySelector("#alertPanel");
 const alertTitle = document.querySelector("#alertTitle");
 const alertCopy = document.querySelector("#alertCopy");
 const cueText = document.querySelector("#cueText");
+const statGoodTime = document.querySelector("#statGoodTime");
+const statBadTime = document.querySelector("#statBadTime");
+const statAlertCount = document.querySelector("#statAlertCount");
+const statLongestPoor = document.querySelector("#statLongestPoor");
 
 const meters = {
   head: [document.querySelector("#headMeter"), document.querySelector("#headText")],
@@ -79,6 +83,15 @@ let lastBeepAt = 0;
 let wasBelowAlertThreshold = false;
 let alertBeganAt = 0;
 let audioContext;
+const sessionStats = {
+  lastAt: 0,
+  goodMs: 0,
+  poorMs: 0,
+  alertCount: 0,
+  poorStreakStart: 0,
+  longestPoorMs: 0,
+  wasPoor: false,
+};
 
 loadSavedState();
 init();
@@ -362,6 +375,7 @@ function updateUi(metrics) {
   updateMetric("torso", metrics.torso);
   updateMetric("height", metrics.height);
   updateMetric("distance", metrics.distance);
+  updateSessionStats(metrics.total);
 
   const problems = buildFeedback(metrics);
   alertPanel.className = `alert-panel ${severity(metrics.total)}`;
@@ -620,4 +634,52 @@ async function refreshCameraList() {
 }
 function applyPrivacyMode() {
   document.querySelector("#stage").classList.toggle("video-hidden", hideVideoToggle.checked);
+}
+function resetSessionStats() {
+  sessionStats.lastAt = performance.now();
+  sessionStats.goodMs = 0;
+  sessionStats.poorMs = 0;
+  sessionStats.alertCount = 0;
+  sessionStats.poorStreakStart = 0;
+  sessionStats.longestPoorMs = 0;
+  sessionStats.wasPoor = false;
+  renderSessionStats();
+}
+
+function updateSessionStats(score) {
+  if (!stream) return;
+
+  const now = performance.now();
+  const elapsed = Math.max(0, now - (sessionStats.lastAt || now));
+  const isPoor = score < Number(thresholdSlider.value);
+
+  if (isPoor) {
+    sessionStats.poorMs += elapsed;
+    if (!sessionStats.wasPoor) {
+      sessionStats.alertCount += 1;
+      sessionStats.poorStreakStart = now;
+    }
+    sessionStats.longestPoorMs = Math.max(sessionStats.longestPoorMs, now - sessionStats.poorStreakStart);
+  } else {
+    sessionStats.goodMs += elapsed;
+    sessionStats.poorStreakStart = 0;
+  }
+
+  sessionStats.wasPoor = isPoor;
+  sessionStats.lastAt = now;
+  renderSessionStats();
+}
+
+function renderSessionStats() {
+  statGoodTime.textContent = formatDuration(sessionStats.goodMs);
+  statBadTime.textContent = formatDuration(sessionStats.poorMs);
+  statAlertCount.textContent = String(sessionStats.alertCount);
+  statLongestPoor.textContent = formatDuration(sessionStats.longestPoorMs);
+}
+
+function formatDuration(ms) {
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+  const seconds = String(totalSeconds % 60).padStart(2, "0");
+  return `${minutes}:${seconds}`;
 }
