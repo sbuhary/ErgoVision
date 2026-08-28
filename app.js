@@ -36,6 +36,9 @@ const breakToggle = document.querySelector("#breakToggle");
 const breakSlider = document.querySelector("#breakSlider");
 const breakValue = document.querySelector("#breakValue");
 const breakStatus = document.querySelector("#breakStatus");
+const exportSettingsButton = document.querySelector("#exportSettingsButton");
+const importSettingsButton = document.querySelector("#importSettingsButton");
+const importSettingsInput = document.querySelector("#importSettingsInput");
 const modelStatus = document.querySelector("#modelStatus");
 const stageEmpty = document.querySelector("#stageEmpty");
 const scoreValue = document.querySelector("#scoreValue");
@@ -158,11 +161,11 @@ resetSettingsButton.addEventListener("click", () => {
   volumeSlider.value = "35";
   breakToggle.value = "off";
   breakSlider.value = "45";
-  resetBreakReminder();
   Object.values(metricControls).forEach((control) => {
     control.checked = true;
   });
   calibration = undefined;
+  resetBreakReminder();
   syncSettingsLabels();
   updateMetricAvailability();
   saveState();
@@ -185,6 +188,10 @@ Object.values(metricControls).forEach((control) => {
     if (lastMetrics) updateUi(lastMetrics);
   });
 });
+
+exportSettingsButton.addEventListener("click", exportSettings);
+importSettingsButton.addEventListener("click", () => importSettingsInput.click());
+importSettingsInput.addEventListener("change", importSettings);
 
 async function init() {
   try {
@@ -529,11 +536,18 @@ function loadSavedState() {
 }
 
 function saveState() {
-  const state = {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(getCurrentState()));
+}
+
+function getCurrentState() {
+  return {
     soundEnabled: soundToggle.checked,
     hideVideo: hideVideoToggle.checked,
     soundPattern: soundPattern.value,
+    sensitivity: sensitivitySelect.value,
     threshold: thresholdSlider.value,
+    delay: delaySlider.value,
+    cameraId: cameraSelect.value,
     interval: intervalSlider.value,
     volume: volumeSlider.value,
     breakEnabled: breakToggle.value,
@@ -545,8 +559,6 @@ function saveState() {
     ),
     calibration,
   };
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
 function calculateTotal(scores) {
@@ -737,4 +749,39 @@ function updateBreakReminder() {
   }
 
   breakStatus.textContent = `Next break in ${formatDuration(remaining)}`;
+}
+function exportSettings() {
+  const payload = JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), state: getCurrentState() }, null, 2);
+  const url = URL.createObjectURL(new Blob([payload], { type: "application/json" }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "ergovision-settings.json";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function importSettings(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    try {
+      const parsed = JSON.parse(String(reader.result));
+      const state = parsed.state || parsed;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      loadSavedState();
+      syncSettingsLabels();
+      cueText.textContent = "Imported settings loaded.";
+      if (lastMetrics) updateUi(lastMetrics);
+    } catch (error) {
+      alertPanel.className = "alert-panel bad";
+      alertTitle.textContent = "Import failed";
+      alertCopy.textContent = "Choose a valid ErgoVision settings JSON file.";
+      console.error(error);
+    } finally {
+      importSettingsInput.value = "";
+    }
+  });
+  reader.readAsText(file);
 }
