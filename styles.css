@@ -55,7 +55,7 @@ input:focus-visible { box-shadow: var(--focus); }
   height: calc(100vh - 30px);
   display: grid;
   grid-template-columns: minmax(720px, 1fr) 360px 330px;
-  gap: 10px;
+  gap: 8px;
   padding: 10px 12px 8px;
 }
 
@@ -73,8 +73,8 @@ input:focus-visible { box-shadow: var(--focus); }
 .workbench {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: 10px;
-  padding: 12px;
+  gap: 8px;
+  padding: 8px;
 }
 
 .topbar,
@@ -117,7 +117,7 @@ h2 {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 7px;
 }
 
 .status-pill {
@@ -128,7 +128,7 @@ h2 {
   background: rgba(98, 198, 215, 0.08);
   color: #c7dbe1;
   text-align: center;
-  font-size: 0.86rem;
+  font-size: 0.82rem;
 }
 
 .status-pill.privacy {
@@ -179,7 +179,7 @@ canvas { pointer-events: none; }
   z-index: 1;
   display: grid;
   place-content: center;
-  gap: 10px;
+  gap: 8px;
   padding: 24px;
   color: #c6d2df;
   text-align: center;
@@ -198,7 +198,7 @@ canvas { pointer-events: none; }
   border: 1px solid rgba(67, 83, 102, 0.64);
   border-radius: var(--radius);
   background: rgba(13, 18, 25, 0.7);
-  padding: 8px;
+  padding: 7px;
 }
 
 button {
@@ -233,7 +233,7 @@ button.primary {
 .control-select {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   min-height: 40px;
   color: var(--muted);
 }
@@ -281,17 +281,17 @@ button.primary {
 
 .inspector {
   display: grid;
-  grid-template-rows: 80px 88px 60px auto minmax(92px, 1fr);
-  gap: 7px;
+  grid-template-rows: 74px 92px 56px minmax(220px, 1fr) minmax(104px, 0.35fr);
+  gap: 5px;
   overflow: hidden;
-  padding: 10px;
+  padding: 8px;
 }
 
 .config-panel {
   display: grid;
   min-height: 0;
   overflow: hidden;
-  padding: 12px;
+  padding: 8px;
 }
 
 .score-panel,
@@ -303,23 +303,23 @@ button.primary {
   border: 1px solid rgba(67, 83, 102, 0.72);
   border-radius: var(--radius);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 36%), var(--panel-2);
-  padding: 12px;
+  padding: 8px;
 }
 
 .score-panel { min-height: 0; }
 #scoreValue {
   display: block;
-  font-size: 2.35rem;
+  font-size: 2.1rem;
   font-weight: 850;
   line-height: 1;
 }
 
 .score-ring {
-  width: 58px;
+  width: 54px;
   aspect-ratio: 1;
   border-radius: 50%;
   background: conic-gradient(var(--muted) 0deg, #303a48 0deg);
-  border: 6px solid var(--surface);
+  border: 5px solid var(--surface);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 10px 24px rgba(0,0,0,0.24);
 }
 
@@ -330,17 +330,21 @@ button.primary {
 .alert-panel.good { border-left-color: var(--good); }
 .alert-panel.warn { border-left-color: var(--warn); }
 .alert-panel.bad { border-left-color: var(--bad); }
-.alert-title { margin-bottom: 5px; font-size: 1rem; font-weight: 800; }
+.alert-title { margin-bottom: 4px; font-size: 0.95rem; font-weight: 800; }
 .alert-copy,
-.guidance p { margin-bottom: 0; color: #c0cad6; line-height: 1.42; }
-.alert-copy { max-height: 46px; overflow-y: auto; }
+.guidance p {
+  margin-bottom: 0;
+  color: #c0cad6;
+  line-height: 1.38;
+}
+.alert-copy { font-size: 0.93rem; overflow: hidden; }
 
-.stats-panel { overflow: hidden; padding: 10px 12px; }
+.stats-panel { overflow: hidden; padding: 8px 10px; }
 .stats-panel h2 { margin-bottom: 5px; }
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
+  gap: 5px;
 }
 .stats-grid span {
   display: grid;
@@ -348,23 +352,23 @@ button.primary {
   color: var(--muted);
   font-size: 0.72rem;
 }
-.stats-grid strong { color: var(--text); font-size: 0.95rem; }
+.stats-grid strong { color: var(--text); font-size: 0.88rem; }
 
 .metrics {
   display: grid;
-  grid-auto-rows: 48px;
-  gap: 6px;
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: 5px;
   min-height: 0;
 }
 
 .metrics article {
   display: grid;
-  grid-template-columns: minmax(118px, 0.82fr) minmax(86px, 1fr) 34px;
+  grid-template-columns: minmax(112px, 0.76fr) minmax(92px, 1fr) 32px;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   min-height: 0;
-  padding: 6px 10px;
-  font-size: 0.86rem;
+  padding: 5px 9px;
+  font-size: 0.82rem;
 }
 
 .metrics article.disabled {
@@ -379,14 +383,14 @@ button.primary {
 .metric-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   min-width: 0;
 }
 .metric-toggle span { overflow-wrap: anywhere; }
 
 meter {
   width: 100%;
-  height: 8px;
+  height: 7px;
 }
 meter::-webkit-meter-bar { border: 0; border-radius: 999px; background: #0a1017; }
 meter::-webkit-meter-optimum-value { border-radius: 999px; background: linear-gradient(90deg, #2fcf84, var(--good)); }
@@ -394,19 +398,19 @@ meter::-webkit-meter-suboptimum-value { border-radius: 999px; background: linear
 meter::-webkit-meter-even-less-good-value { border-radius: 999px; background: linear-gradient(90deg, #e95559, var(--bad)); }
 
 .guidance {
-  height: auto;
+  min-height: 0;
   overflow: hidden;
 }
 .guidance p {
-  max-height: 54px;
-  overflow-y: auto;
+  overflow: hidden;
+  font-size: 0.94rem;
 }
 
 .settings {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-content: start;
-  gap: 10px;
+  gap: 8px;
   overflow: hidden;
   height: 100%;
 }
@@ -423,13 +427,13 @@ meter::-webkit-meter-even-less-good-value { border-radius: 999px; background: li
   border-radius: 7px;
   background: rgba(13, 18, 25, 0.42);
   color: var(--muted);
-  padding: 8px;
+  padding: 7px;
   font-size: 0.82rem;
 }
 .settings span {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
 }
 .settings output {
   color: var(--text);
@@ -438,12 +442,12 @@ meter::-webkit-meter-even-less-good-value { border-radius: 999px; background: li
 .settings-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 7px;
 }
 .settings-actions button,
 .wide-action {
   width: 100%;
-  height: 36px;
+  height: 34px;
   padding: 0 10px;
   font-size: 0.84rem;
 }
@@ -453,7 +457,7 @@ input[type="range"],
 input[type="number"] { width: 100%; }
 select,
 input[type="number"] {
-  height: 32px;
+  height: 31px;
   border: 1px solid rgba(67, 83, 102, 0.82);
   border-radius: 7px;
   background: #0b1017;
@@ -483,7 +487,7 @@ input[type="range"] { accent-color: var(--accent); }
   bottom: 38px;
   z-index: 20;
   display: grid;
-  gap: 8px;
+  gap: 7px;
   width: min(360px, calc(100vw - 36px));
   pointer-events: none;
 }
