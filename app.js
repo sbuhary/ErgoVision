@@ -43,6 +43,7 @@ const knownDistanceInput = document.querySelector("#knownDistanceInput");
 const minDistanceInput = document.querySelector("#minDistanceInput");
 const calibrateDistanceButton = document.querySelector("#calibrateDistanceButton");
 const toastToggle = document.querySelector("#toastToggle");
+const notificationToggle = document.querySelector("#notificationToggle");
 const toastRegion = document.querySelector("#toastRegion");
 const modelStatus = document.querySelector("#modelStatus");
 const stageEmpty = document.querySelector("#stageEmpty");
@@ -100,6 +101,9 @@ let breakAlerted = false;
 let toastBeganAt = 0;
 let toastWasPoor = false;
 let lastToastAt = 0;
+let notificationBeganAt = 0;
+let notificationWasPoor = false;
+let lastNotificationAt = 0;
 const sessionStats = {
   lastAt: 0,
   goodMs: 0,
@@ -152,6 +156,11 @@ calibrateButton.addEventListener("click", () => {
   });
 });
 
+notificationToggle.addEventListener("change", async () => {
+  await syncNotificationPermission();
+  saveState();
+});
+
 resetCalibrationButton.addEventListener("click", () => {
   calibration = undefined;
   saveState();
@@ -170,6 +179,7 @@ resetSettingsButton.addEventListener("click", () => {
   intervalSlider.value = "4";
   volumeSlider.value = "35";
   toastToggle.value = "on";
+  notificationToggle.value = "off";
   breakToggle.value = "off";
   breakSlider.value = "45";
   knownDistanceInput.value = "60";
@@ -443,6 +453,7 @@ function updateUi(metrics) {
   alertCopy.textContent = problems[0];
   cueText.textContent = problems.join(" ");
   maybeShowToast(metrics.total, problems[0]);
+  maybeShowBrowserNotification(metrics.total, problems[0]);
   maybeBeep(metrics.total);
 }
 
@@ -463,8 +474,7 @@ function buildFeedback(metrics) {
     feedback.push("Sit taller against the calibrated upright height; lift through the chest and neck.");
   }
   if (isMetricEnabled("distance") && calibration && metrics.distance < cueThreshold) {
-    const distanceText = metrics.raw.estimatedDistanceCm ? ` Estimated distance: ${Math.round(metrics.raw.estimatedDistanceCm)} cm.` : "";
-    feedback.push(`Move back from the screen; your face or shoulders are closer than the calibrated position.${distanceText}`);
+    feedback.push("Move back from the screen; you are closer than your calibrated distance.");
   }
   if (!calibration) {
     feedback.push("Calibrate once from a comfortable upright seated posture for better slouch detection.");
@@ -536,7 +546,9 @@ function syncSettingsLabels() {
   thresholdValue.textContent = thresholdSlider.value;
   intervalValue.textContent = `${Number(intervalSlider.value).toFixed(1)}s`;
   volumeValue.textContent = `${volumeSlider.value}%`;
+  delayValue.textContent = `${delaySlider.value}s`;
   breakValue.textContent = `${breakSlider.value}m`;
+  syncNotificationControl();
   updateBreakReminder();
 }
 
@@ -548,7 +560,10 @@ function loadSavedState() {
     if (saved.hideVideo != null) hideVideoToggle.checked = Boolean(saved.hideVideo);
     if (saved.soundPattern) soundPattern.value = saved.soundPattern;
     if (saved.toastEnabled) toastToggle.value = saved.toastEnabled;
+    if (saved.notificationEnabled) notificationToggle.value = saved.notificationEnabled;
+    if (saved.sensitivity) sensitivitySelect.value = saved.sensitivity;
     if (saved.threshold) thresholdSlider.value = saved.threshold;
+    if (saved.delay) delaySlider.value = saved.delay;
     if (saved.interval) intervalSlider.value = saved.interval;
     if (saved.volume) volumeSlider.value = saved.volume;
     if (saved.breakEnabled) breakToggle.value = saved.breakEnabled;
@@ -586,6 +601,7 @@ function getCurrentState() {
     hideVideo: hideVideoToggle.checked,
     soundPattern: soundPattern.value,
     toastEnabled: toastToggle.value,
+    notificationEnabled: notificationToggle.value,
     sensitivity: sensitivitySelect.value,
     threshold: thresholdSlider.value,
     delay: delaySlider.value,
@@ -788,6 +804,7 @@ function updateBreakReminder() {
       alertCopy.textContent = "Stand, stretch, and look away from the screen for a short break.";
       cueText.textContent = "Break due. Reset the reminder after you return.";
       showToast("Break due: stand, stretch, and look away from the screen.", "warn");
+      showBrowserNotification("Break due", "Stand, stretch, and look away from the screen.");
       saveState();
     }
     return;
@@ -854,6 +871,71 @@ function maybeShowToast(score, message) {
   toastWasPoor = true;
 }
 
+function maybeShowBrowserNotification(score, message) {
+  const threshold = Number(thresholdSlider.value);
+  const isBelowThreshold = score < threshold;
+  const now = performance.now();
+
+  if (notificationToggle.value !== "on" || !isBelowThreshold) {
+    notificationWasPoor = isBelowThreshold;
+    notificationBeganAt = 0;
+    return;
+  }
+
+  if (!notificationBeganAt) notificationBeganAt = now;
+  if (now - notificationBeganAt < Number(delaySlider.value) * 1000) {
+    notificationWasPoor = true;
+    return;
+  }
+
+  if (!notificationWasPoor || now - lastNotificationAt > 30000) {
+    showBrowserNotification("ErgoVision posture alert", message);
+    lastNotificationAt = now;
+  }
+  notificationWasPoor = true;
+}
+
+function showBrowserNotification(title, body) {
+  if (notificationToggle.value !== "on" || !("Notification" in window) || Notification.permission !== "granted") return;
+  new Notification(title, {
+    body,
+    icon: "./favicon.svg",
+    tag: "ergovision-posture",
+    renotify: true,
+  });
+}
+
+async function syncNotificationPermission() {
+  if (notificationToggle.value !== "on") return;
+
+  if (!("Notification" in window)) {
+    notificationToggle.value = "off";
+    cueText.textContent = "Browser notifications are not supported in this browser.";
+    return;
+  }
+
+  if (Notification.permission === "default") {
+    await Notification.requestPermission();
+  }
+
+  if (Notification.permission !== "granted") {
+    notificationToggle.value = "off";
+    cueText.textContent = "Browser notification permission was not granted.";
+  }
+}
+
+function syncNotificationControl() {
+  if (!("Notification" in window)) {
+    notificationToggle.value = "off";
+    notificationToggle.disabled = true;
+    notificationToggle.title = "Browser notifications are not supported here.";
+    return;
+  }
+
+  notificationToggle.disabled = false;
+  notificationToggle.title = Notification.permission === "denied" ? "Notifications are blocked in browser settings." : "";
+  if (Notification.permission === "denied") notificationToggle.value = "off";
+}
 function showToast(message, type = "warn") {
   if (!toastRegion || toastToggle?.value === "off") return;
 
