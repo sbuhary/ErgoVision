@@ -36,12 +36,12 @@ button, input, select { font: inherit; }
   height: calc(100vh - 42px);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 390px;
+  grid-template-columns: minmax(0, 1fr) 360px 330px;
   gap: 14px;
   padding: 14px;
 }
 
-.workbench, .inspector {
+.workbench, .inspector, .config-panel {
   min-width: 0;
   min-height: 0;
   border: 1px solid var(--line);
@@ -158,9 +158,16 @@ button.primary { border-color: rgba(98, 198, 215, 0.72); background: linear-grad
 
 .inspector {
   display: grid;
-  grid-template-rows: 86px 72px 66px auto 82px minmax(128px, 1fr);
+  grid-template-rows: 86px 72px 66px minmax(0, 1fr) 82px;
   gap: 8px;
-  overflow-y: auto;
+  overflow: hidden;
+  padding: 12px;
+}
+
+.config-panel {
+  display: grid;
+  min-height: 0;
+  overflow: hidden;
   padding: 12px;
 }
 
@@ -214,12 +221,12 @@ meter::-webkit-meter-even-less-good-value { border-radius: 999px; background: va
 .guidance { height: auto; overflow: hidden; }
 .guidance p { max-height: 36px; overflow-y: auto; }
 
-.settings { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 10px; overflow: hidden; }
+.settings { display: grid; grid-template-columns: 1fr 1fr; align-content: start; gap: 8px 10px; overflow: hidden; }
 .settings h2, .settings-actions, .settings-note, .wide-action { grid-column: 1 / -1; }
 .settings label { display: grid; gap: 4px; color: var(--muted); font-size: 0.82rem; }
 .settings span { display: flex; justify-content: space-between; gap: 10px; }
 .settings output { color: var(--text); font-weight: 700; }
-.settings-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.settings-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .settings-actions button { width: 100%; height: 34px; padding: 0 10px; font-size: 0.82rem; }
 select, input[type="range"], input[type="number"] { width: 100%; }
 select, input[type="number"] { height: 30px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); color: var(--text); padding: 0 10px; }
@@ -234,16 +241,26 @@ input[type="range"] { accent-color: var(--accent); }
 
 .site-footer { width: min(1480px, 100%); margin: 0 auto; height: 28px; padding: 0 18px 10px; color: var(--subtle); font-size: 0.85rem; text-align: center; }
 
+@media (max-width: 1180px) {
+  .app-shell { grid-template-columns: minmax(0, 1fr) 360px; }
+  .config-panel { grid-column: 1 / -1; }
+  .settings { grid-template-columns: repeat(4, 1fr); }
+  .settings h2, .settings-actions, .settings-note, .wide-action { grid-column: auto; }
+  .settings h2, .settings-note { grid-column: 1 / -1; }
+  .settings-actions { grid-column: 1 / -1; grid-template-columns: repeat(4, 1fr); }
+}
+
 @media (max-width: 980px) {
   body { height: auto; min-height: 100vh; overflow: auto; }
   .app-shell { grid-template-columns: 1fr; height: auto; min-height: calc(100vh - 42px); }
   .inspector { grid-template-rows: none; overflow: visible; }
+  .config-panel { overflow: visible; }
   .workbench { min-height: 70vh; }
 }
 
 @media (max-width: 640px) {
   .app-shell { padding: 10px; }
-  .workbench, .inspector { padding: 12px; }
+  .workbench, .inspector, .config-panel { padding: 12px; }
   .topbar { align-items: flex-start; flex-direction: column; }
   .status-group { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .status-pill { width: 100%; }

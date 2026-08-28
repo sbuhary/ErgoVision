@@ -115,7 +115,9 @@
           <h2>Current cue</h2>
           <p id="cueText">Place the webcam near eye level and avoid strong backlighting.</p>
         </section>
+      </aside>
 
+      <aside class="config-panel" aria-label="Posture configuration">
         <section class="settings" aria-label="Alert settings">
           <h2>Alert settings</h2>
           <label>
@@ -149,7 +151,7 @@
             <span>Volume <output id="volumeValue">35%</output></span>
             <input id="volumeSlider" type="range" min="0" max="100" value="35" />
           </label>
-                    <label>
+          <label>
             <span>Visual popup</span>
             <select id="toastToggle">
               <option value="on">On</option>
@@ -177,7 +179,7 @@
             <input id="minDistanceInput" type="number" min="20" max="150" step="1" value="50" />
           </label>
           <button id="calibrateDistanceButton" type="button" class="wide-action">Calibrate distance</button>
-<div class="settings-actions">
+          <div class="settings-actions">
             <button id="resetCalibrationButton" type="button">Reset calibration</button>
             <button id="resetSettingsButton" type="button">Reset settings</button>
             <button id="exportSettingsButton" type="button">Export</button>
@@ -187,7 +189,7 @@
         </section>
       </aside>
     </main>
-        <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+    <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
     <footer class="site-footer">Copyright &copy; 2026 John Dhabolt. All rights reserved.</footer>
 
     <script type="module" src="./app.js"></script>
