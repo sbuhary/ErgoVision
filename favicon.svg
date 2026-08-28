@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ErgoVision">
+  <defs>
+    <linearGradient id="bg" x1="10" y1="6" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#62c6d7"/>
+      <stop offset="1" stop-color="#42d392"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="20" y1="13" x2="46" y2="49" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f6feff"/>
+      <stop offset="1" stop-color="#d7f8ee"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#0d1219"/>
+  <path d="M14 46V18c0-3.3 2.7-6 6-6h26c2.2 0 4 1.8 4 4v4H25v8h21v8H25v8h27v4c0 2.2-1.8 4-4 4H20c-3.3 0-6-2.7-6-6Z" fill="url(#bg)"/>
+  <circle cx="42" cy="20" r="5" fill="url(#mark)"/>
+  <path d="M38 29h8c3.3 0 6 2.7 6 6v3H36v-7c0-1.1.9-2 2-2Z" fill="url(#mark)" opacity=".96"/>
+  <path d="M21 48c8.8 0 15.7-2.9 20.7-8.8" fill="none" stroke="#f6feff" stroke-width="4" stroke-linecap="round"/>
+</svg>
