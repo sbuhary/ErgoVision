@@ -19,6 +19,7 @@ const startButton = document.querySelector("#startButton");
 const calibrateButton = document.querySelector("#calibrateButton");
 const cameraSelect = document.querySelector("#cameraSelect");
 const soundToggle = document.querySelector("#soundToggle");
+const hideVideoToggle = document.querySelector("#hideVideoToggle");
 const soundPattern = document.querySelector("#soundPattern");
 const sensitivitySelect = document.querySelector("#sensitivitySelect");
 const thresholdSlider = document.querySelector("#thresholdSlider");
@@ -112,8 +113,11 @@ calibrateButton.addEventListener("click", () => {
   });
 });
 
-[soundToggle, soundPattern, sensitivitySelect].forEach((control) => {
-  control.addEventListener("change", saveState);
+[soundToggle, hideVideoToggle, soundPattern, sensitivitySelect].forEach((control) => {
+  control.addEventListener("change", () => {
+    applyPrivacyMode();
+    saveState();
+  });
 });
 
 resetCalibrationButton.addEventListener("click", () => {
@@ -126,6 +130,7 @@ resetCalibrationButton.addEventListener("click", () => {
 resetSettingsButton.addEventListener("click", () => {
   localStorage.removeItem(STORAGE_KEY);
   soundToggle.checked = false;
+  hideVideoToggle.checked = false;
   soundPattern.value = "single";
   sensitivitySelect.value = "normal";
   thresholdSlider.value = "60";
@@ -470,6 +475,7 @@ function loadSavedState() {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
 
     if (saved.soundEnabled != null) soundToggle.checked = Boolean(saved.soundEnabled);
+    if (saved.hideVideo != null) hideVideoToggle.checked = Boolean(saved.hideVideo);
     if (saved.soundPattern) soundPattern.value = saved.soundPattern;
     if (saved.threshold) thresholdSlider.value = saved.threshold;
     if (saved.interval) intervalSlider.value = saved.interval;
@@ -483,6 +489,7 @@ function loadSavedState() {
     }
     if (saved.calibration) calibration = saved.calibration;
     updateMetricAvailability();
+    applyPrivacyMode();
 
     if (calibration) {
       cueText.textContent = "Saved calibration loaded. Recalibrate if your chair, screen, or camera moved.";
@@ -495,6 +502,7 @@ function loadSavedState() {
 function saveState() {
   const state = {
     soundEnabled: soundToggle.checked,
+    hideVideo: hideVideoToggle.checked,
     soundPattern: soundPattern.value,
     threshold: thresholdSlider.value,
     interval: intervalSlider.value,
@@ -609,4 +617,7 @@ async function refreshCameraList() {
   } catch (error) {
     console.warn("Could not enumerate cameras.", error);
   }
+}
+function applyPrivacyMode() {
+  document.querySelector("#stage").classList.toggle("video-hidden", hideVideoToggle.checked);
 }
