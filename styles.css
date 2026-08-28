@@ -164,7 +164,7 @@ button.primary { border-color: rgba(98, 198, 215, 0.72); background: linear-grad
   padding: 12px;
 }
 
-.score-panel, .alert-panel, .guidance, .settings, .stats-panel, .break-panel, .distance-panel, .data-panel, .toast-region {
+.score-panel, .alert-panel, .guidance, .settings, .stats-panel, .break-panel, .distance-panel, .data-panel {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent), var(--panel-strong);
@@ -251,3 +251,28 @@ input[type="range"] { accent-color: var(--accent); }
   .metrics article { grid-template-columns: 1fr; gap: 6px; }
   .settings { grid-template-columns: 1fr; }
 }
+.toast-region {
+  position: fixed;
+  right: 18px;
+  bottom: 44px;
+  z-index: 20;
+  display: grid;
+  gap: 8px;
+  width: min(360px, calc(100vw - 36px));
+  pointer-events: none;
+}
+
+.toast {
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--warn);
+  border-radius: 8px;
+  background: rgba(28, 35, 45, 0.96);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  padding: 12px 14px;
+  line-height: 1.4;
+}
+
+.toast.good { border-left-color: var(--good); }
+.toast.bad { border-left-color: var(--bad); }
+.toast.warn { border-left-color: var(--warn); }

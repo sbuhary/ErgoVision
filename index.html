@@ -150,6 +150,13 @@
             <input id="volumeSlider" type="range" min="0" max="100" value="35" />
           </label>
                     <label>
+            <span>Visual popup</span>
+            <select id="toastToggle">
+              <option value="on">On</option>
+              <option value="off">Off</option>
+            </select>
+          </label>
+          <label>
             <span>Break reminder</span>
             <select id="breakToggle">
               <option value="off">Off</option>
@@ -180,6 +187,7 @@
         </section>
       </aside>
     </main>
+        <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
     <footer class="site-footer">Copyright &copy; 2026 Shihaaz Buhary. All rights reserved.</footer>
 
     <script type="module" src="./app.js"></script>

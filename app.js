@@ -42,6 +42,8 @@ const importSettingsInput = document.querySelector("#importSettingsInput");
 const knownDistanceInput = document.querySelector("#knownDistanceInput");
 const minDistanceInput = document.querySelector("#minDistanceInput");
 const calibrateDistanceButton = document.querySelector("#calibrateDistanceButton");
+const toastToggle = document.querySelector("#toastToggle");
+const toastRegion = document.querySelector("#toastRegion");
 const modelStatus = document.querySelector("#modelStatus");
 const stageEmpty = document.querySelector("#stageEmpty");
 const scoreValue = document.querySelector("#scoreValue");
@@ -95,6 +97,9 @@ let alertBeganAt = 0;
 let audioContext;
 let breakStartedAt = Date.now();
 let breakAlerted = false;
+let toastBeganAt = 0;
+let toastWasPoor = false;
+let lastToastAt = 0;
 const sessionStats = {
   lastAt: 0,
   goodMs: 0,
@@ -140,7 +145,7 @@ calibrateButton.addEventListener("click", () => {
   });
 });
 
-[soundToggle, hideVideoToggle, soundPattern, sensitivitySelect, breakToggle].forEach((control) => {
+[soundToggle, hideVideoToggle, soundPattern, sensitivitySelect, breakToggle, toastToggle].forEach((control) => {
   control.addEventListener("change", () => {
     applyPrivacyMode();
     saveState();
@@ -164,6 +169,7 @@ resetSettingsButton.addEventListener("click", () => {
   delaySlider.value = "3";
   intervalSlider.value = "4";
   volumeSlider.value = "35";
+  toastToggle.value = "on";
   breakToggle.value = "off";
   breakSlider.value = "45";
   knownDistanceInput.value = "60";
@@ -436,6 +442,7 @@ function updateUi(metrics) {
   alertTitle.textContent = metrics.total < 60 ? "Adjust your posture" : "Small correction needed";
   alertCopy.textContent = problems[0];
   cueText.textContent = problems.join(" ");
+  maybeShowToast(metrics.total, problems[0]);
   maybeBeep(metrics.total);
 }
 
@@ -540,6 +547,7 @@ function loadSavedState() {
     if (saved.soundEnabled != null) soundToggle.checked = Boolean(saved.soundEnabled);
     if (saved.hideVideo != null) hideVideoToggle.checked = Boolean(saved.hideVideo);
     if (saved.soundPattern) soundPattern.value = saved.soundPattern;
+    if (saved.toastEnabled) toastToggle.value = saved.toastEnabled;
     if (saved.threshold) thresholdSlider.value = saved.threshold;
     if (saved.interval) intervalSlider.value = saved.interval;
     if (saved.volume) volumeSlider.value = saved.volume;
@@ -577,6 +585,7 @@ function getCurrentState() {
     soundEnabled: soundToggle.checked,
     hideVideo: hideVideoToggle.checked,
     soundPattern: soundPattern.value,
+    toastEnabled: toastToggle.value,
     sensitivity: sensitivitySelect.value,
     threshold: thresholdSlider.value,
     delay: delaySlider.value,
@@ -778,6 +787,7 @@ function updateBreakReminder() {
       alertTitle.textContent = "Break due";
       alertCopy.textContent = "Stand, stretch, and look away from the screen for a short break.";
       cueText.textContent = "Break due. Reset the reminder after you return.";
+      showToast("Break due: stand, stretch, and look away from the screen.", "warn");
       saveState();
     }
     return;
@@ -819,4 +829,37 @@ function importSettings(event) {
     }
   });
   reader.readAsText(file);
+}
+function maybeShowToast(score, message) {
+  const threshold = Number(thresholdSlider.value);
+  const isBelowThreshold = score < threshold;
+  const now = performance.now();
+
+  if (toastToggle.value !== "on" || !isBelowThreshold) {
+    toastWasPoor = isBelowThreshold;
+    toastBeganAt = 0;
+    return;
+  }
+
+  if (!toastBeganAt) toastBeganAt = now;
+  if (now - toastBeganAt < Number(delaySlider.value) * 1000) {
+    toastWasPoor = true;
+    return;
+  }
+
+  if (!toastWasPoor || now - lastToastAt > 15000) {
+    showToast(message, severity(score));
+    lastToastAt = now;
+  }
+  toastWasPoor = true;
+}
+
+function showToast(message, type = "warn") {
+  if (!toastRegion || toastToggle?.value === "off") return;
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  toastRegion.append(toast);
+  window.setTimeout(() => toast.remove(), 5200);
 }
