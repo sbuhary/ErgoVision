@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   color-scheme: dark;
   --bg: #0d1014;
   --panel: #151a21;
@@ -42,7 +42,7 @@ select {
 
 .app-shell {
   width: min(1480px, 100%);
-  min-height: 100vh;
+  min-height: calc(100vh - 58px);
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 400px;
@@ -474,3 +474,14 @@ input[type="range"] {
     gap: 6px;
   }
 }
+
+.site-footer {
+  width: min(1480px, 100%);
+  margin: 0 auto;
+  padding: 0 18px 18px;
+  color: var(--subtle);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+
