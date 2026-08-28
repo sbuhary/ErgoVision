@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ErgoVision Posture Coach</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workbench" aria-label="Webcam posture analysis">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Live webcam posture analysis</p>
+            <h1>ErgoVision</h1>
+          </div>
+          <div class="status-pill" id="modelStatus">Loading model</div>
+        </header>
+
+        <div class="stage" id="stage">
+          <video id="webcam" playsinline muted></video>
+          <canvas id="overlay"></canvas>
+          <div class="stage-empty" id="stageEmpty">
+            <strong>Camera is off</strong>
+            <span>Start the webcam, sit naturally in frame, then calibrate from a comfortable upright posture.</span>
+          </div>
+        </div>
+
+        <div class="controls" aria-label="Controls">
+          <button id="startButton" class="primary">Start webcam</button>
+          <button id="calibrateButton" disabled>Calibrate upright</button>
+          <label class="toggle">
+            <input id="soundToggle" type="checkbox" />
+            <span>Sound alert</span>
+          </label>
+        </div>
+      </section>
+
+      <aside class="inspector" aria-label="Posture feedback">
+        <section class="score-panel">
+          <div>
+            <p class="eyebrow">Posture score</p>
+            <output id="scoreValue">--</output>
+          </div>
+          <div class="score-ring" id="scoreRing" aria-hidden="true"></div>
+        </section>
+
+        <section class="alert-panel" id="alertPanel">
+          <p class="alert-title" id="alertTitle">Waiting for a pose</p>
+          <p class="alert-copy" id="alertCopy">Keep your head and both shoulders visible.</p>
+        </section>
+
+        <section class="metrics" aria-label="Measured posture signals">
+          <article>
+            <label class="metric-toggle">
+              <input id="headEnabled" type="checkbox" checked />
+              <span>Head centered</span>
+            </label>
+            <meter id="headMeter" min="0" max="100" value="0"></meter>
+            <strong id="headText">--</strong>
+          </article>
+          <article>
+            <label class="metric-toggle">
+              <input id="shoulderEnabled" type="checkbox" checked />
+              <span>Shoulder level</span>
+            </label>
+            <meter id="shoulderMeter" min="0" max="100" value="0"></meter>
+            <strong id="shoulderText">--</strong>
+          </article>
+          <article>
+            <label class="metric-toggle">
+              <input id="torsoEnabled" type="checkbox" checked />
+              <span>Neck stacked</span>
+            </label>
+            <meter id="torsoMeter" min="0" max="100" value="0"></meter>
+            <strong id="torsoText">--</strong>
+          </article>
+          <article>
+            <label class="metric-toggle">
+              <input id="heightEnabled" type="checkbox" checked />
+              <span>Upright height</span>
+            </label>
+            <meter id="heightMeter" min="0" max="100" value="0"></meter>
+            <strong id="heightText">--</strong>
+          </article>
+          <article>
+            <label class="metric-toggle">
+              <input id="distanceEnabled" type="checkbox" checked />
+              <span>Screen distance</span>
+            </label>
+            <meter id="distanceMeter" min="0" max="100" value="0"></meter>
+            <strong id="distanceText">--</strong>
+          </article>
+        </section>
+
+        <section class="guidance">
+          <h2>Current cue</h2>
+          <p id="cueText">Place the webcam near eye level and avoid strong backlighting.</p>
+        </section>
+
+        <section class="settings" aria-label="Alert settings">
+          <h2>Alert settings</h2>
+          <label>
+            <span>Sound pattern</span>
+            <select id="soundPattern">
+              <option value="single">Single beep</option>
+              <option value="interval">Interval beeps</option>
+            </select>
+          </label>
+          <label>
+            <span>Alert below <output id="thresholdValue">60</output></span>
+            <input id="thresholdSlider" type="range" min="40" max="90" value="60" />
+          </label>
+          <label>
+            <span>Interval <output id="intervalValue">4.0s</output></span>
+            <input id="intervalSlider" type="range" min="1" max="15" step="0.5" value="4" />
+          </label>
+          <label>
+            <span>Volume <output id="volumeValue">35%</output></span>
+            <input id="volumeSlider" type="range" min="0" max="100" value="35" />
+          </label>
+        </section>
+      </aside>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
