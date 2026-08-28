@@ -32,13 +32,13 @@ body {
 button, input, select { font: inherit; }
 
 .app-shell {
-  width: min(1480px, 100%);
-  height: calc(100vh - 42px);
+  width: 100vw;
+  height: calc(100vh - 34px);
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 360px 330px;
-  gap: 14px;
-  padding: 14px;
+  gap: 12px;
+  padding: 12px;
 }
 
 .workbench, .inspector, .config-panel {
@@ -239,7 +239,7 @@ input[type="range"] { accent-color: var(--accent); }
 .stats-grid span { display: grid; gap: 2px; color: var(--muted); font-size: 0.72rem; }
 .stats-grid strong { color: var(--text); font-size: 0.9rem; }
 
-.site-footer { width: min(1480px, 100%); margin: 0 auto; height: 28px; padding: 0 18px 10px; color: var(--subtle); font-size: 0.85rem; text-align: center; }
+.site-footer { width: 100vw; margin: 0; height: 24px; padding: 0 12px 8px; color: var(--subtle); font-size: 0.85rem; text-align: center; }
 
 @media (max-width: 1180px) {
   .app-shell { grid-template-columns: minmax(0, 1fr) 360px; }
@@ -271,7 +271,7 @@ input[type="range"] { accent-color: var(--accent); }
 .toast-region {
   position: fixed;
   right: 18px;
-  bottom: 44px;
+  bottom: 36px;
   z-index: 20;
   display: grid;
   gap: 8px;
