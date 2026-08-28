@@ -161,6 +161,15 @@
             <input id="breakSlider" type="range" min="15" max="90" step="5" value="45" />
           </label>
           <p class="settings-note" id="breakStatus">Break reminders off</p>
+          <label>
+            <span>Known distance cm</span>
+            <input id="knownDistanceInput" type="number" min="20" max="150" step="1" value="60" />
+          </label>
+          <label>
+            <span>Minimum cm</span>
+            <input id="minDistanceInput" type="number" min="20" max="150" step="1" value="50" />
+          </label>
+          <button id="calibrateDistanceButton" type="button" class="wide-action">Calibrate distance</button>
 <div class="settings-actions">
             <button id="resetCalibrationButton" type="button">Reset calibration</button>
             <button id="resetSettingsButton" type="button">Reset settings</button>

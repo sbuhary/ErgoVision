@@ -39,6 +39,9 @@ const breakStatus = document.querySelector("#breakStatus");
 const exportSettingsButton = document.querySelector("#exportSettingsButton");
 const importSettingsButton = document.querySelector("#importSettingsButton");
 const importSettingsInput = document.querySelector("#importSettingsInput");
+const knownDistanceInput = document.querySelector("#knownDistanceInput");
+const minDistanceInput = document.querySelector("#minDistanceInput");
+const calibrateDistanceButton = document.querySelector("#calibrateDistanceButton");
 const modelStatus = document.querySelector("#modelStatus");
 const stageEmpty = document.querySelector("#stageEmpty");
 const scoreValue = document.querySelector("#scoreValue");
@@ -123,12 +126,14 @@ calibrateButton.addEventListener("click", () => {
     torsoHeightRatio: lastMetrics.raw.torsoHeightRatio,
     shoulderWidth: lastMetrics.raw.shoulderWidth,
     headWidth: lastMetrics.raw.headWidth,
+    knownDistanceCm: Number(knownDistanceInput.value) || undefined,
+    minDistanceCm: Number(minDistanceInput.value) || undefined,
   };
   saveState();
   cueText.textContent = "Calibration saved. Return to this upright seated position when alerts appear.";
 });
 
-[thresholdSlider, delaySlider, intervalSlider, volumeSlider, breakSlider].forEach((control) => {
+[thresholdSlider, delaySlider, intervalSlider, volumeSlider, breakSlider, knownDistanceInput, minDistanceInput].forEach((control) => {
   control.addEventListener("input", () => {
     syncSettingsLabels();
     saveState();
@@ -161,6 +166,8 @@ resetSettingsButton.addEventListener("click", () => {
   volumeSlider.value = "35";
   breakToggle.value = "off";
   breakSlider.value = "45";
+  knownDistanceInput.value = "60";
+  minDistanceInput.value = "50";
   Object.values(metricControls).forEach((control) => {
     control.checked = true;
   });
@@ -192,6 +199,17 @@ Object.values(metricControls).forEach((control) => {
 exportSettingsButton.addEventListener("click", exportSettings);
 importSettingsButton.addEventListener("click", () => importSettingsInput.click());
 importSettingsInput.addEventListener("change", importSettings);
+calibrateDistanceButton.addEventListener("click", () => {
+  if (!lastMetrics) return;
+  calibration ??= {};
+  calibration.shoulderWidth = lastMetrics.raw.shoulderWidth;
+  calibration.headWidth = lastMetrics.raw.headWidth;
+  calibration.knownDistanceCm = Number(knownDistanceInput.value) || undefined;
+  calibration.minDistanceCm = Number(minDistanceInput.value) || undefined;
+  saveState();
+  cueText.textContent = "Distance calibration saved from the current camera position.";
+  updateUi(lastMetrics);
+});
 
 async function init() {
   try {
@@ -351,6 +369,17 @@ function scorePosture(landmarks) {
     calibration?.headWidth && headWidth
       ? Math.max(0, headWidth - calibration.headWidth) / calibration.headWidth
       : 0;
+  let estimatedDistanceCm = null;
+  let distanceShortfall = 0;
+  if (calibration?.knownDistanceCm) {
+    const shoulderEstimate = calibration.shoulderWidth ? calibration.knownDistanceCm * (calibration.shoulderWidth / shoulderWidth) : null;
+    const headEstimate = calibration.headWidth && headWidth ? calibration.knownDistanceCm * (calibration.headWidth / headWidth) : null;
+    const estimates = [shoulderEstimate, headEstimate].filter(Boolean);
+    estimatedDistanceCm = estimates.length ? estimates.reduce((sum, value) => sum + value, 0) / estimates.length : null;
+    if (estimatedDistanceCm && calibration.minDistanceCm) {
+      distanceShortfall = Math.max(0, calibration.minDistanceCm - estimatedDistanceCm) / calibration.minDistanceCm;
+    }
+  }
   const distanceGain = Math.max(shoulderDistanceGain, headDistanceGain);
 
   const head = qualityFromError(headOffset, 0.08, 0.32);
@@ -376,6 +405,7 @@ function scorePosture(landmarks) {
       torsoHeightRatio,
       shoulderWidth,
       headWidth,
+      estimatedDistanceCm,
       hipsVisible,
     },
   };
@@ -426,7 +456,8 @@ function buildFeedback(metrics) {
     feedback.push("Sit taller against the calibrated upright height; lift through the chest and neck.");
   }
   if (isMetricEnabled("distance") && calibration && metrics.distance < cueThreshold) {
-    feedback.push("Move back from the screen; your face or shoulders are closer than the calibrated position.");
+    const distanceText = metrics.raw.estimatedDistanceCm ? ` Estimated distance: ${Math.round(metrics.raw.estimatedDistanceCm)} cm.` : "";
+    feedback.push(`Move back from the screen; your face or shoulders are closer than the calibrated position.${distanceText}`);
   }
   if (!calibration) {
     feedback.push("Calibrate once from a comfortable upright seated posture for better slouch detection.");
@@ -516,6 +547,8 @@ function loadSavedState() {
     if (saved.breakMinutes) breakSlider.value = saved.breakMinutes;
     if (saved.breakStartedAt) breakStartedAt = saved.breakStartedAt;
     if (saved.breakAlerted != null) breakAlerted = Boolean(saved.breakAlerted);
+    if (saved.knownDistanceCm) knownDistanceInput.value = saved.knownDistanceCm;
+    if (saved.minDistanceCm) minDistanceInput.value = saved.minDistanceCm;
     if (saved.enabledMetrics) {
       Object.entries(metricControls).forEach(([key, control]) => {
         if (saved.enabledMetrics[key] != null) {
@@ -554,6 +587,8 @@ function getCurrentState() {
     breakMinutes: breakSlider.value,
     breakStartedAt,
     breakAlerted,
+    knownDistanceCm: knownDistanceInput.value,
+    minDistanceCm: minDistanceInput.value,
     enabledMetrics: Object.fromEntries(
       Object.entries(metricControls).map(([key, control]) => [key, control.checked]),
     ),

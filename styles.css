@@ -215,15 +215,16 @@ meter::-webkit-meter-even-less-good-value { border-radius: 999px; background: va
 .guidance p { max-height: 36px; overflow-y: auto; }
 
 .settings { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 10px; overflow: hidden; }
-.settings h2, .settings-actions, .settings-note { grid-column: 1 / -1; }
+.settings h2, .settings-actions, .settings-note, .wide-action { grid-column: 1 / -1; }
 .settings label { display: grid; gap: 4px; color: var(--muted); font-size: 0.82rem; }
 .settings span { display: flex; justify-content: space-between; gap: 10px; }
 .settings output { color: var(--text); font-weight: 700; }
 .settings-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .settings-actions button { width: 100%; height: 34px; padding: 0 10px; font-size: 0.82rem; }
-select, input[type="range"] { width: 100%; }
-select { height: 30px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); color: var(--text); padding: 0 10px; }
+select, input[type="range"], input[type="number"] { width: 100%; }
+select, input[type="number"] { height: 30px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); color: var(--text); padding: 0 10px; }
 input[type="range"] { accent-color: var(--accent); }
+.wide-action { height: 32px; }
 .settings-note { margin: 0; color: var(--subtle); font-size: 0.78rem; }
 .stats-panel { overflow: hidden; }
 .stats-panel h2 { margin-bottom: 6px; }
