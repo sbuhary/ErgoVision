@@ -19,8 +19,11 @@ const startButton = document.querySelector("#startButton");
 const calibrateButton = document.querySelector("#calibrateButton");
 const soundToggle = document.querySelector("#soundToggle");
 const soundPattern = document.querySelector("#soundPattern");
+const sensitivitySelect = document.querySelector("#sensitivitySelect");
 const thresholdSlider = document.querySelector("#thresholdSlider");
 const thresholdValue = document.querySelector("#thresholdValue");
+const delaySlider = document.querySelector("#delaySlider");
+const delayValue = document.querySelector("#delayValue");
 const intervalSlider = document.querySelector("#intervalSlider");
 const intervalValue = document.querySelector("#intervalValue");
 const volumeSlider = document.querySelector("#volumeSlider");
@@ -57,6 +60,11 @@ const metricWeights = {
   height: 0.27,
   distance: 0.15,
 };
+const sensitivityPresets = {
+  relaxed: { cue: 64, head: [0.11, 0.38], shoulder: [0.06, 0.23], torso: [0.11, 0.38], height: [0.07, 0.25], distance: [0.16, 0.58] },
+  normal: { cue: 72, head: [0.08, 0.32], shoulder: [0.04, 0.18], torso: [0.08, 0.32], height: [0.04, 0.18], distance: [0.1, 0.45] },
+  strict: { cue: 80, head: [0.06, 0.24], shoulder: [0.03, 0.13], torso: [0.06, 0.24], height: [0.025, 0.13], distance: [0.07, 0.32] },
+};
 
 let poseLandmarker;
 let drawingUtils;
@@ -67,6 +75,7 @@ let lastMetrics;
 let calibration;
 let lastBeepAt = 0;
 let wasBelowAlertThreshold = false;
+let alertBeganAt = 0;
 let audioContext;
 
 loadSavedState();
@@ -94,14 +103,14 @@ calibrateButton.addEventListener("click", () => {
   cueText.textContent = "Calibration saved. Return to this upright seated position when alerts appear.";
 });
 
-[thresholdSlider, intervalSlider, volumeSlider].forEach((control) => {
+[thresholdSlider, delaySlider, intervalSlider, volumeSlider].forEach((control) => {
   control.addEventListener("input", () => {
     syncSettingsLabels();
     saveState();
   });
 });
 
-[soundToggle, soundPattern].forEach((control) => {
+[soundToggle, soundPattern, sensitivitySelect].forEach((control) => {
   control.addEventListener("change", saveState);
 });
 
@@ -356,20 +365,21 @@ function updateUi(metrics) {
 
 function buildFeedback(metrics) {
   const feedback = [];
+  const cueThreshold = getSensitivityPreset().cue;
 
-  if (isMetricEnabled("head") && metrics.head < 72) {
+  if (isMetricEnabled("head") && metrics.head < cueThreshold) {
     feedback.push("Center your head over your shoulders and bring your chin slightly back.");
   }
-  if (isMetricEnabled("shoulder") && metrics.shoulder < 72) {
+  if (isMetricEnabled("shoulder") && metrics.shoulder < cueThreshold) {
     feedback.push("Relax and level your shoulders; avoid lifting one side toward the ear.");
   }
-  if (isMetricEnabled("torso") && metrics.torso < 72) {
+  if (isMetricEnabled("torso") && metrics.torso < cueThreshold) {
     feedback.push("Stack your head over the center of your shoulders instead of leaning sideways.");
   }
-  if (isMetricEnabled("height") && calibration && metrics.height < 72) {
+  if (isMetricEnabled("height") && calibration && metrics.height < cueThreshold) {
     feedback.push("Sit taller against the calibrated upright height; lift through the chest and neck.");
   }
-  if (isMetricEnabled("distance") && calibration && metrics.distance < 72) {
+  if (isMetricEnabled("distance") && calibration && metrics.distance < cueThreshold) {
     feedback.push("Move back from the screen; your face or shoulders are closer than the calibrated position.");
   }
   if (!calibration) {
@@ -555,4 +565,7 @@ function resizeCanvas() {
     canvas.width = width;
     canvas.height = height;
   }
+}
+function getSensitivityPreset() {
+  return sensitivityPresets[sensitivitySelect.value] || sensitivityPresets.normal;
 }

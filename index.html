@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -101,6 +101,14 @@
         <section class="settings" aria-label="Alert settings">
           <h2>Alert settings</h2>
           <label>
+            <span>Sensitivity</span>
+            <select id="sensitivitySelect">
+              <option value="relaxed">Relaxed</option>
+              <option value="normal" selected>Normal</option>
+              <option value="strict">Strict</option>
+            </select>
+          </label>
+          <label>
             <span>Sound pattern</span>
             <select id="soundPattern">
               <option value="single">Single beep</option>
@@ -110,6 +118,10 @@
           <label>
             <span>Alert below <output id="thresholdValue">60</output></span>
             <input id="thresholdSlider" type="range" min="40" max="90" value="60" />
+          </label>
+          <label>
+            <span>Alert delay <output id="delayValue">3s</output></span>
+            <input id="delaySlider" type="range" min="0" max="20" step="1" value="3" />
           </label>
           <label>
             <span>Interval <output id="intervalValue">4.0s</output></span>
