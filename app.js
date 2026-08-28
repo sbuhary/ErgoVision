@@ -17,6 +17,7 @@ const canvas = document.querySelector("#overlay");
 const ctx = canvas.getContext("2d");
 const startButton = document.querySelector("#startButton");
 const calibrateButton = document.querySelector("#calibrateButton");
+const cameraSelect = document.querySelector("#cameraSelect");
 const soundToggle = document.querySelector("#soundToggle");
 const soundPattern = document.querySelector("#soundPattern");
 const sensitivitySelect = document.querySelector("#sensitivitySelect");
@@ -80,6 +81,7 @@ let audioContext;
 
 loadSavedState();
 init();
+refreshCameraList();
 syncSettingsLabels();
 
 startButton.addEventListener("click", async () => {
@@ -125,7 +127,9 @@ resetSettingsButton.addEventListener("click", () => {
   localStorage.removeItem(STORAGE_KEY);
   soundToggle.checked = false;
   soundPattern.value = "single";
+  sensitivitySelect.value = "normal";
   thresholdSlider.value = "60";
+  delaySlider.value = "3";
   intervalSlider.value = "4";
   volumeSlider.value = "35";
   Object.values(metricControls).forEach((control) => {
@@ -137,6 +141,14 @@ resetSettingsButton.addEventListener("click", () => {
   saveState();
   cueText.textContent = "Settings reset. Calibrate from your upright seated posture when ready.";
   if (lastMetrics) updateUi(lastMetrics);
+});
+
+cameraSelect.addEventListener("change", async () => {
+  saveState();
+  if (stream) {
+    stopCamera(false);
+    await startCamera();
+  }
 });
 
 Object.values(metricControls).forEach((control) => {
@@ -189,11 +201,7 @@ async function startCamera() {
 
   try {
     stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: "user",
-        width: { ideal: 1280 },
-        height: { ideal: 720 },
-      },
+      video: getVideoConstraints(),
       audio: false,
     });
 
@@ -203,6 +211,7 @@ async function startCamera() {
     startButton.textContent = "Stop webcam";
     calibrateButton.disabled = false;
     resizeCanvas();
+    await refreshCameraList();
     requestAnimationFrame(analyzeFrame);
   } catch (error) {
     alertPanel.className = "alert-panel bad";
@@ -213,15 +222,17 @@ async function startCamera() {
   }
 }
 
-function stopCamera() {
+function stopCamera(resetUi = true) {
   stream.getTracks().forEach((track) => track.stop());
   stream = undefined;
   video.srcObject = null;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  stageEmpty.hidden = false;
-  startButton.textContent = "Start webcam";
-  calibrateButton.disabled = true;
-  setWaitingState();
+  if (resetUi) {
+    stageEmpty.hidden = false;
+    startButton.textContent = "Start webcam";
+    calibrateButton.disabled = true;
+    setWaitingState();
+  }
   wasBelowAlertThreshold = false;
 }
 
@@ -568,4 +579,34 @@ function resizeCanvas() {
 }
 function getSensitivityPreset() {
   return sensitivityPresets[sensitivitySelect.value] || sensitivityPresets.normal;
+}
+function getVideoConstraints() {
+  const selectedCamera = cameraSelect.value;
+  return selectedCamera
+    ? { deviceId: { exact: selectedCamera }, width: { ideal: 1280 }, height: { ideal: 720 } }
+    : { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } };
+}
+
+async function refreshCameraList() {
+  if (!navigator.mediaDevices?.enumerateDevices) return;
+
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const cameras = devices.filter((device) => device.kind === "videoinput");
+    const savedCameraId = cameraSelect.dataset.savedCameraId || cameraSelect.value;
+
+    cameraSelect.innerHTML = '<option value="">Default camera</option>';
+    cameras.forEach((camera, index) => {
+      const option = document.createElement("option");
+      option.value = camera.deviceId;
+      option.textContent = camera.label || `Camera ${index + 1}`;
+      cameraSelect.append(option);
+    });
+
+    if ([...cameraSelect.options].some((option) => option.value === savedCameraId)) {
+      cameraSelect.value = savedCameraId;
+    }
+  } catch (error) {
+    console.warn("Could not enumerate cameras.", error);
+  }
 }
