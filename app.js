@@ -21,6 +21,7 @@ const calibrateButton = document.querySelector("#calibrateButton");
 const fullscreenButton = document.querySelector("#fullscreenButton");
 const stageFullscreenExit = document.querySelector("#stageFullscreenExit");
 const settingsToggle = document.querySelector("#settingsToggle");
+const settingsClose = document.querySelector("#settingsClose");
 const configPanel = document.querySelector("#configPanel");
 const cameraSelect = document.querySelector("#cameraSelect");
 const soundToggle = document.querySelector("#soundToggle");
@@ -109,7 +110,8 @@ let lastToastAt = 0;
 let notificationBeganAt = 0;
 let notificationWasPoor = false;
 let lastNotificationAt = 0;
-let settingsCollapsed = false;
+let settingsCollapsed = true;
+let settingsDrawerOpen = false;
 const sessionStats = {
   lastAt: 0,
   goodMs: 0,
@@ -126,7 +128,14 @@ refreshCameraList();
 syncSettingsLabels();
 
 settingsToggle.addEventListener("click", () => {
-  settingsCollapsed = !settingsCollapsed;
+  settingsCollapsed = true;
+  settingsDrawerOpen = !settingsDrawerOpen;
+  applySettingsPanelState();
+  saveState();
+});
+
+settingsClose.addEventListener("click", () => {
+  settingsDrawerOpen = false;
   applySettingsPanelState();
   saveState();
 });
@@ -195,7 +204,8 @@ resetSettingsButton.addEventListener("click", () => {
   volumeSlider.value = "35";
   toastToggle.value = "on";
   notificationToggle.value = "off";
-  settingsCollapsed = false;
+  settingsCollapsed = true;
+  settingsDrawerOpen = false;
   breakToggle.value = "off";
   breakSlider.value = "45";
   knownDistanceInput.value = "60";
@@ -577,7 +587,8 @@ function loadSavedState() {
     if (saved.soundPattern) soundPattern.value = saved.soundPattern;
     if (saved.toastEnabled) toastToggle.value = saved.toastEnabled;
     if (saved.notificationEnabled) notificationToggle.value = saved.notificationEnabled;
-    if (saved.settingsCollapsed != null) settingsCollapsed = Boolean(saved.settingsCollapsed);
+    settingsCollapsed = true;
+    settingsDrawerOpen = false;
     if (saved.sensitivity) sensitivitySelect.value = saved.sensitivity;
     if (saved.threshold) thresholdSlider.value = saved.threshold;
     if (saved.delay) delaySlider.value = saved.delay;
@@ -764,9 +775,10 @@ function syncFullscreenControls() {
 
 function applySettingsPanelState() {
   appShell.classList.toggle("settings-collapsed", settingsCollapsed);
-  settingsToggle.textContent = settingsCollapsed ? "Show settings" : "Hide settings";
-  settingsToggle.setAttribute("aria-expanded", String(!settingsCollapsed));
-  configPanel.setAttribute("aria-hidden", String(settingsCollapsed));
+  appShell.classList.toggle("settings-open", settingsDrawerOpen);
+  settingsToggle.textContent = settingsDrawerOpen ? "Close settings" : "Settings";
+  settingsToggle.setAttribute("aria-expanded", String(settingsDrawerOpen));
+  configPanel.setAttribute("aria-hidden", String(!settingsDrawerOpen));
 }
 function applyPrivacyMode() {
   document.querySelector("#stage").classList.toggle("video-hidden", hideVideoToggle.checked);

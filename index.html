@@ -9,14 +9,17 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="app-shell" id="appShell">
+    <main class="app-shell settings-collapsed" id="appShell">
       <section class="workbench" aria-label="Webcam posture analysis">
         <header class="topbar">
-          <div>
-            <p class="eyebrow">Live webcam posture analysis</p>
-            <h1>ErgoVision</h1>
+          <div class="brand-block">
+            <img class="brand-mark" src="./favicon.svg" alt="" />
+            <div>
+              <p class="eyebrow">Live webcam posture analysis</p>
+              <h1>ErgoVision</h1>
+            </div>
           </div>
-          <div class="status-group"><button id="settingsToggle" class="utility-button" type="button" aria-expanded="true" aria-controls="configPanel">Settings</button><div class="status-pill privacy" id="privacyStatus">Local processing</div><div class="status-pill" id="modelStatus">Loading model</div></div>
+          <div class="status-group"><button id="settingsToggle" class="utility-button" type="button" aria-expanded="false" aria-controls="configPanel">Settings</button><div class="status-pill privacy" id="privacyStatus">Local processing</div><div class="status-pill" id="modelStatus">Loading model</div></div>
         </header>
 
         <div class="stage" id="stage">
@@ -121,9 +124,9 @@
         </section>
       </aside>
 
-      <aside class="config-panel" id="configPanel" aria-label="Posture configuration">
+      <aside class="config-panel" id="configPanel" aria-label="Posture configuration" aria-hidden="true">
         <section class="settings" aria-label="Alert settings">
-          <h2>Alert settings</h2>
+          <div class="settings-header"><h2>Alert settings</h2><button id="settingsClose" class="settings-close" type="button">Close</button></div>
           <label>
             <span>Sensitivity</span>
             <select id="sensitivitySelect">
