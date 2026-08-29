@@ -419,7 +419,7 @@ button.primary {
 
 .inspector {
   display: grid;
-  grid-template-rows: 106px 88px 76px 250px minmax(104px, 1fr);
+  grid-template-rows: 106px 88px 76px 286px minmax(104px, 1fr);
   gap: 6px;
   overflow: hidden;
   padding: 8px;
@@ -437,6 +437,30 @@ button.primary {
 .guidance,
 .settings,
 .stats-panel,
+.metrics-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.metrics-header h2 {
+  margin-bottom: 0;
+  font-size: 0.88rem;
+}
+
+.metrics-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.metrics-actions button {
+  height: 28px;
+  padding: 0 9px;
+  font-size: 0.72rem;
+}
+
 .metrics article {
   border: 1px solid rgba(67, 83, 102, 0.72);
   border-radius: var(--radius);
@@ -497,7 +521,7 @@ button.primary {
 
 .metrics {
   display: grid;
-  grid-template-rows: repeat(5, minmax(0, 1fr));
+  grid-template-rows: auto repeat(5, minmax(0, 1fr));
   gap: 5px;
   min-height: 0;
 }

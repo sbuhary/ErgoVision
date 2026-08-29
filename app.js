@@ -65,6 +65,8 @@ const statGoodTime = document.querySelector("#statGoodTime");
 const statBadTime = document.querySelector("#statBadTime");
 const statAlertCount = document.querySelector("#statAlertCount");
 const statLongestPoor = document.querySelector("#statLongestPoor");
+const enableAllMetricsButton = document.querySelector("#enableAllMetricsButton");
+const disableAllMetricsButton = document.querySelector("#disableAllMetricsButton");
 
 const meters = {
   head: [document.querySelector("#headMeter"), document.querySelector("#headText")],
@@ -234,6 +236,9 @@ cameraSelect.addEventListener("change", async () => {
     await startCamera();
   }
 });
+
+enableAllMetricsButton.addEventListener("click", () => setAllMetricsEnabled(true));
+disableAllMetricsButton.addEventListener("click", () => setAllMetricsEnabled(false));
 
 Object.values(metricControls).forEach((control) => {
   control.addEventListener("change", () => {
@@ -671,6 +676,15 @@ function calculateTotal(scores) {
 
 function isMetricEnabled(key) {
   return metricControls[key]?.checked ?? true;
+}
+
+function setAllMetricsEnabled(enabled) {
+  Object.values(metricControls).forEach((control) => {
+    control.checked = enabled;
+  });
+  updateMetricAvailability();
+  saveState();
+  if (lastMetrics) updateUi(lastMetrics);
 }
 
 function updateMetricAvailability() {
