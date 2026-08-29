@@ -59,15 +59,21 @@ input:focus-visible { box-shadow: var(--focus); }
   padding: 10px 12px 8px;
 }
 
-.workbench,
-.inspector,
-
 .app-shell:not(.camera-active) .inspector {
-  grid-template-rows: 106px 88px 76px minmax(286px, 1fr) 116px;
+  grid-template-rows: 106px 88px 76px auto minmax(104px, 1fr);
 }
 
 .app-shell:not(.camera-active) .guidance p {
   max-width: 34ch;
+}
+
+.app-shell:not(.camera-active) .metrics {
+  grid-template-rows: auto repeat(5, 58px);
+}
+
+.app-shell:not(.camera-active) .metrics article {
+  min-height: 58px;
+  align-content: center;
 }
 .config-panel {
   min-width: 0;
@@ -162,8 +168,7 @@ h2 {
   font-size: 0.82rem;
 }
 
-.utility-
-button {
+.utility-button {
   height: 38px;
   border-color: rgba(98, 198, 215, 0.5);
   background: linear-gradient(180deg, rgba(98, 198, 215, 0.18), rgba(98, 198, 215, 0.08));
@@ -233,6 +238,7 @@ button {
 .stage:fullscreen {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   border: 0;
   border-radius: 0;
 }
@@ -352,6 +358,7 @@ body.stage-focus-active {
   z-index: 40;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   border: 0;
   border-radius: 0;
 }
@@ -636,11 +643,10 @@ meter::-webkit-meter-even-less-good-value { border-radius: 999px; background: li
 .settings {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto repeat(5, minmax(0, auto)) auto auto auto 1fr auto;
-  align-content: stretch;
+  align-content: start;
   gap: 8px;
   overflow: hidden;
-  height: 100%;
+  min-height: 100%;
 }
 .settings-header,
 .settings-actions,
@@ -680,7 +686,6 @@ meter::-webkit-meter-even-less-good-value { border-radius: 999px; background: li
 .settings-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-self: end;
   gap: 8px;
 }
 .settings-actions button,
