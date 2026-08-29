@@ -280,9 +280,52 @@ canvas { pointer-events: none; }
   text-align: center;
 }
 
+
+.empty-card {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  width: min(560px, calc(100vw - 80px));
+  border: 1px solid rgba(67, 83, 102, 0.78);
+  border-radius: var(--radius);
+  background: rgba(13, 18, 25, 0.78);
+  padding: 24px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(14px);
+}
+
+.empty-card > span {
+  max-width: 48ch;
+  color: #c8d3df;
+  line-height: 1.45;
+}
+
+.empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.empty-status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.empty-status span {
+  border: 1px solid rgba(98, 198, 215, 0.22);
+  border-radius: 999px;
+  background: rgba(98, 198, 215, 0.08);
+  color: #bcd1db;
+  padding: 6px 10px;
+  font-size: 0.76rem;
+}
 .stage-empty strong {
   color: var(--text);
-  font-size: 1.35rem;
+  font-size: 1.6rem;
+  line-height: 1;
   text-shadow: 0 2px 18px rgba(0,0,0,0.45);
 }
 
@@ -525,7 +568,6 @@ meter::-webkit-meter-even-less-good-value { border-radius: 999px; background: li
 }
 .settings-header h2 { margin-bottom: 0; }
 .settings-close { height: 32px; padding: 0 12px; font-size: 0.8rem; }
-.settings-close:hover { border-color: rgba(255, 255, 255, 0.42); }
 .settings-close:hover { border-color: rgba(255, 255, 255, 0.42); }
 .settings label {
   display: grid;

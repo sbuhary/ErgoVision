@@ -27,8 +27,20 @@
           <canvas id="overlay"></canvas>
           <button id="stageFullscreenExit" class="stage-fullscreen-exit" type="button">Exit full screen</button>
           <div class="stage-empty" id="stageEmpty">
-            <strong>Camera is off</strong>
-            <span>Start the webcam, sit naturally in frame, then calibrate from a comfortable upright posture.</span>
+            <div class="empty-card">
+              <p class="eyebrow">Ready for local posture analysis</p>
+              <strong>Camera is off</strong>
+              <span>Start the webcam, sit naturally in frame, then calibrate from a comfortable upright posture.</span>
+              <div class="empty-actions">
+                <button id="stageStartButton" class="primary" type="button">Start webcam</button>
+                <button id="stageSettingsButton" type="button">Alert settings</button>
+              </div>
+              <div class="empty-status" aria-label="Setup status">
+                <span>Private on-device processing</span>
+                <span>Pose model required</span>
+                <span>Camera permission needed</span>
+              </div>
+            </div>
           </div>
         </div>
 

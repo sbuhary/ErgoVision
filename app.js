@@ -17,6 +17,8 @@ const video = document.querySelector("#webcam");
 const canvas = document.querySelector("#overlay");
 const ctx = canvas.getContext("2d");
 const startButton = document.querySelector("#startButton");
+const stageStartButton = document.querySelector("#stageStartButton");
+const stageSettingsButton = document.querySelector("#stageSettingsButton");
 const calibrateButton = document.querySelector("#calibrateButton");
 const fullscreenButton = document.querySelector("#fullscreenButton");
 const stageFullscreenExit = document.querySelector("#stageFullscreenExit");
@@ -143,6 +145,9 @@ settingsClose.addEventListener("click", () => {
 fullscreenButton.addEventListener("click", toggleStageFullscreen);
 stageFullscreenExit.addEventListener("click", toggleStageFullscreen);
 document.addEventListener("fullscreenchange", syncFullscreenControls);
+stageStartButton.addEventListener("click", startCamera);
+stageSettingsButton.addEventListener("click", openSettingsDrawer);
+
 startButton.addEventListener("click", async () => {
   if (stream) {
     stopCamera();
@@ -771,6 +776,19 @@ function syncFullscreenControls() {
   const isFullscreen = document.fullscreenElement === document.querySelector("#stage");
   fullscreenButton.textContent = isFullscreen ? "Exit full screen" : "Full screen video";
   stageFullscreenExit.hidden = !isFullscreen;
+}
+
+function openSettingsDrawer() {
+  settingsCollapsed = true;
+  settingsDrawerOpen = true;
+  applySettingsPanelState();
+  saveState();
+}
+
+function closeSettingsDrawer() {
+  settingsDrawerOpen = false;
+  applySettingsPanelState();
+  saveState();
 }
 
 function applySettingsPanelState() {
