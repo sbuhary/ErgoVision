@@ -45,23 +45,28 @@
         </div>
 
         <div class="controls" aria-label="Controls">
-          <button id="startButton" class="primary">Start webcam</button>
-          <button id="calibrateButton" disabled>Calibrate upright</button>
-          <button id="fullscreenButton" type="button">Full screen video</button>
-          <label class="control-select">
+          <div class="control-group primary-controls" aria-label="Primary actions">
+            <button id="startButton" class="primary">Start webcam</button>
+            <button id="calibrateButton" disabled>Calibrate upright</button>
+          </div>
+          <div class="control-group view-controls" aria-label="View controls">
+            <button id="fullscreenButton" type="button">Full screen video</button>
+            <label class="toggle">
+              <input id="hideVideoToggle" type="checkbox" />
+              <span>Hide video</span>
+            </label>
+          </div>
+          <label class="control-select control-group device-controls" aria-label="Camera device">
             <span>Camera</span>
             <select id="cameraSelect"><option value="">Default camera</option></select>
           </label>
-          <label class="toggle">
-            <input id="soundToggle" type="checkbox" />
-            <span>Sound alert</span>
-          </label>
-          <label class="toggle">
-            <input id="hideVideoToggle" type="checkbox" />
-            <span>Hide video</span>
-          </label>
-        </div>
-      </section>
+          <div class="control-group alert-controls" aria-label="Alert controls">
+            <label class="toggle">
+              <input id="soundToggle" type="checkbox" />
+              <span>Sound alert</span>
+            </label>
+          </div>
+        </div>      </section>
 
       <aside class="inspector" aria-label="Posture feedback">
         <section class="score-panel">

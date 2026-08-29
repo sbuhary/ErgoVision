@@ -154,7 +154,8 @@ h2 {
   font-size: 0.82rem;
 }
 
-.utility-button {
+.utility-
+button {
   height: 38px;
   border-color: rgba(98, 198, 215, 0.5);
   background: linear-gradient(180deg, rgba(98, 198, 215, 0.18), rgba(98, 198, 215, 0.08));
@@ -339,6 +340,7 @@ canvas { pointer-events: none; }
   padding: 7px;
 }
 
+
 button {
   height: 40px;
   border: 1px solid var(--line);
@@ -356,6 +358,23 @@ button:hover:not(:disabled) {
   transform: translateY(-1px);
 }
 
+.control-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.primary-controls,
+.view-controls,
+.alert-controls {
+  flex: 0 0 auto;
+}
+
+.device-controls {
+  flex: 1 1 320px;
+  max-width: 430px;
+}
 button:disabled {
   cursor: not-allowed;
   opacity: 0.52;
@@ -455,7 +474,8 @@ button.primary {
   gap: 6px;
 }
 
-.metrics-actions button {
+.metrics-actions
+button {
   height: 28px;
   padding: 0 9px;
   font-size: 0.72rem;
@@ -730,5 +750,7 @@ input[type="range"] { accent-color: var(--accent); }
   .status-pill { flex: 1; min-width: 0; }
   .metrics { grid-template-rows: none; grid-auto-rows: auto; }
   .metrics article { grid-template-columns: 1fr; gap: 8px; }
+  .controls { flex-wrap: wrap; justify-content: flex-start; }
+  .control-group, .device-controls { flex: 1 1 100%; max-width: none; }
   .settings { grid-template-columns: 1fr; }
 }
