@@ -54,7 +54,7 @@ input:focus-visible { box-shadow: var(--focus); }
   width: 100vw;
   height: calc(100vh - 30px);
   display: grid;
-  grid-template-columns: minmax(720px, 1fr) 360px 330px;
+  grid-template-columns: minmax(680px, 1fr) 360px 360px;
   gap: 8px;
   padding: 10px 12px 8px;
 }
@@ -281,8 +281,8 @@ button.primary {
 
 .inspector {
   display: grid;
-  grid-template-rows: 74px 92px 56px minmax(220px, 1fr) minmax(104px, 0.35fr);
-  gap: 5px;
+  grid-template-rows: 106px 88px 76px 250px minmax(104px, 1fr);
+  gap: 6px;
   overflow: hidden;
   padding: 8px;
 }
@@ -309,17 +309,18 @@ button.primary {
 .score-panel { min-height: 0; }
 #scoreValue {
   display: block;
-  font-size: 2.1rem;
-  font-weight: 850;
-  line-height: 1;
+  min-width: 92px;
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 0.9;
 }
 
 .score-ring {
-  width: 54px;
+  width: 68px;
   aspect-ratio: 1;
   border-radius: 50%;
   background: conic-gradient(var(--muted) 0deg, #303a48 0deg);
-  border: 5px solid var(--surface);
+  border: 6px solid var(--surface);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 10px 24px rgba(0,0,0,0.24);
 }
 
@@ -340,19 +341,21 @@ button.primary {
 .alert-copy { font-size: 0.93rem; overflow: hidden; }
 
 .stats-panel { overflow: hidden; padding: 8px 10px; }
-.stats-panel h2 { margin-bottom: 5px; }
+.stats-panel h2 { margin-bottom: 6px; font-size: 0.88rem; }
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 5px;
 }
 .stats-grid span {
   display: grid;
-  gap: 2px;
+  gap: 3px;
+  min-width: 0;
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
+  line-height: 1.05;
 }
-.stats-grid strong { color: var(--text); font-size: 0.88rem; }
+.stats-grid strong { color: var(--text); font-size: 0.95rem; line-height: 1; }
 
 .metrics {
   display: grid;
@@ -409,7 +412,8 @@ meter::-webkit-meter-even-less-good-value { border-radius: 999px; background: li
 .settings {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-content: start;
+  grid-template-rows: auto repeat(5, minmax(0, auto)) auto auto auto 1fr auto;
+  align-content: stretch;
   gap: 8px;
   overflow: hidden;
   height: 100%;
@@ -421,13 +425,15 @@ meter::-webkit-meter-even-less-good-value { border-radius: 999px; background: li
 .settings h2 { margin-bottom: 2px; }
 .settings label {
   display: grid;
-  gap: 5px;
+  align-content: center;
+  gap: 6px;
   min-width: 0;
+  min-height: 68px;
   border: 1px solid rgba(67, 83, 102, 0.45);
   border-radius: 7px;
   background: rgba(13, 18, 25, 0.42);
   color: var(--muted);
-  padding: 7px;
+  padding: 8px;
   font-size: 0.82rem;
 }
 .settings span {
@@ -442,7 +448,8 @@ meter::-webkit-meter-even-less-good-value { border-radius: 999px; background: li
 .settings-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 7px;
+  align-self: end;
+  gap: 8px;
 }
 .settings-actions button,
 .wide-action {
@@ -466,7 +473,7 @@ input[type="number"] {
 }
 input[type="range"] { accent-color: var(--accent); }
 .settings-note {
-  margin: 0;
+  margin: -2px 0 2px;
   color: var(--subtle);
   font-size: 0.78rem;
 }
@@ -513,9 +520,8 @@ input[type="range"] { accent-color: var(--accent); }
   background: rgba(125, 138, 154, 0.72);
   background-clip: content-box;
 }
-
 @media (max-width: 1280px) {
-  .app-shell { grid-template-columns: minmax(0, 1fr) 340px 320px; }
+  .app-shell { grid-template-columns: minmax(0, 1fr) 350px 340px; }
   .control-select select { min-width: 210px; }
 }
 
@@ -527,7 +533,7 @@ input[type="range"] { accent-color: var(--accent); }
     grid-template-columns: minmax(0, 1fr) 360px;
   }
   .config-panel { grid-column: 1 / -1; overflow: visible; }
-  .settings { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .settings { grid-template-columns: repeat(4, minmax(0, 1fr)); height: auto; }
   .settings h2,
   .settings-note { grid-column: 1 / -1; }
   .settings-actions { grid-column: 1 / -1; grid-template-columns: repeat(4, 1fr); }
@@ -549,7 +555,7 @@ input[type="range"] { accent-color: var(--accent); }
   .topbar { align-items: flex-start; flex-direction: column; }
   .status-group { justify-content: stretch; width: 100%; }
   .status-pill { flex: 1; min-width: 0; }
-  .metrics { grid-auto-rows: auto; }
+  .metrics { grid-template-rows: none; grid-auto-rows: auto; }
   .metrics article { grid-template-columns: 1fr; gap: 8px; }
   .settings { grid-template-columns: 1fr; }
 }
