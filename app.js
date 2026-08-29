@@ -12,11 +12,16 @@ const MODEL_URL =
   "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task";
 const STORAGE_KEY = "ergovision-settings-v1";
 
+const appShell = document.querySelector("#appShell");
 const video = document.querySelector("#webcam");
 const canvas = document.querySelector("#overlay");
 const ctx = canvas.getContext("2d");
 const startButton = document.querySelector("#startButton");
 const calibrateButton = document.querySelector("#calibrateButton");
+const fullscreenButton = document.querySelector("#fullscreenButton");
+const stageFullscreenExit = document.querySelector("#stageFullscreenExit");
+const settingsToggle = document.querySelector("#settingsToggle");
+const configPanel = document.querySelector("#configPanel");
 const cameraSelect = document.querySelector("#cameraSelect");
 const soundToggle = document.querySelector("#soundToggle");
 const hideVideoToggle = document.querySelector("#hideVideoToggle");
@@ -104,6 +109,7 @@ let lastToastAt = 0;
 let notificationBeganAt = 0;
 let notificationWasPoor = false;
 let lastNotificationAt = 0;
+let settingsCollapsed = false;
 const sessionStats = {
   lastAt: 0,
   goodMs: 0,
@@ -119,6 +125,15 @@ init();
 refreshCameraList();
 syncSettingsLabels();
 
+settingsToggle.addEventListener("click", () => {
+  settingsCollapsed = !settingsCollapsed;
+  applySettingsPanelState();
+  saveState();
+});
+
+fullscreenButton.addEventListener("click", toggleStageFullscreen);
+stageFullscreenExit.addEventListener("click", toggleStageFullscreen);
+document.addEventListener("fullscreenchange", syncFullscreenControls);
 startButton.addEventListener("click", async () => {
   if (stream) {
     stopCamera();
@@ -180,6 +195,7 @@ resetSettingsButton.addEventListener("click", () => {
   volumeSlider.value = "35";
   toastToggle.value = "on";
   notificationToggle.value = "off";
+  settingsCollapsed = false;
   breakToggle.value = "off";
   breakSlider.value = "45";
   knownDistanceInput.value = "60";
@@ -561,6 +577,7 @@ function loadSavedState() {
     if (saved.soundPattern) soundPattern.value = saved.soundPattern;
     if (saved.toastEnabled) toastToggle.value = saved.toastEnabled;
     if (saved.notificationEnabled) notificationToggle.value = saved.notificationEnabled;
+    if (saved.settingsCollapsed != null) settingsCollapsed = Boolean(saved.settingsCollapsed);
     if (saved.sensitivity) sensitivitySelect.value = saved.sensitivity;
     if (saved.threshold) thresholdSlider.value = saved.threshold;
     if (saved.delay) delaySlider.value = saved.delay;
@@ -582,6 +599,7 @@ function loadSavedState() {
     if (saved.calibration) calibration = saved.calibration;
     updateMetricAvailability();
     applyPrivacyMode();
+    applySettingsPanelState();
 
     if (calibration) {
       cueText.textContent = "Saved calibration loaded. Recalibrate if your chair, screen, or camera moved.";
@@ -602,6 +620,7 @@ function getCurrentState() {
     soundPattern: soundPattern.value,
     toastEnabled: toastToggle.value,
     notificationEnabled: notificationToggle.value,
+    settingsCollapsed,
     sensitivity: sensitivitySelect.value,
     threshold: thresholdSlider.value,
     delay: delaySlider.value,
@@ -722,6 +741,32 @@ async function refreshCameraList() {
   } catch (error) {
     console.warn("Could not enumerate cameras.", error);
   }
+}
+async function toggleStageFullscreen() {
+  const stage = document.querySelector("#stage");
+  try {
+    if (!document.fullscreenElement) {
+      await stage.requestFullscreen();
+    } else {
+      await document.exitFullscreen();
+    }
+  } catch (error) {
+    cueText.textContent = "Full screen could not be started by this browser.";
+    console.warn("Could not toggle stage fullscreen.", error);
+  }
+}
+
+function syncFullscreenControls() {
+  const isFullscreen = document.fullscreenElement === document.querySelector("#stage");
+  fullscreenButton.textContent = isFullscreen ? "Exit full screen" : "Full screen video";
+  stageFullscreenExit.hidden = !isFullscreen;
+}
+
+function applySettingsPanelState() {
+  appShell.classList.toggle("settings-collapsed", settingsCollapsed);
+  settingsToggle.textContent = settingsCollapsed ? "Show settings" : "Hide settings";
+  settingsToggle.setAttribute("aria-expanded", String(!settingsCollapsed));
+  configPanel.setAttribute("aria-hidden", String(settingsCollapsed));
 }
 function applyPrivacyMode() {
   document.querySelector("#stage").classList.toggle("video-hidden", hideVideoToggle.checked);

@@ -9,19 +9,20 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="app-shell">
+    <main class="app-shell" id="appShell">
       <section class="workbench" aria-label="Webcam posture analysis">
         <header class="topbar">
           <div>
             <p class="eyebrow">Live webcam posture analysis</p>
             <h1>ErgoVision</h1>
           </div>
-          <div class="status-group"><div class="status-pill privacy" id="privacyStatus">Local processing</div><div class="status-pill" id="modelStatus">Loading model</div></div>
+          <div class="status-group"><button id="settingsToggle" class="utility-button" type="button" aria-expanded="true" aria-controls="configPanel">Settings</button><div class="status-pill privacy" id="privacyStatus">Local processing</div><div class="status-pill" id="modelStatus">Loading model</div></div>
         </header>
 
         <div class="stage" id="stage">
           <video id="webcam" playsinline muted></video>
           <canvas id="overlay"></canvas>
+          <button id="stageFullscreenExit" class="stage-fullscreen-exit" type="button">Exit full screen</button>
           <div class="stage-empty" id="stageEmpty">
             <strong>Camera is off</strong>
             <span>Start the webcam, sit naturally in frame, then calibrate from a comfortable upright posture.</span>
@@ -31,6 +32,7 @@
         <div class="controls" aria-label="Controls">
           <button id="startButton" class="primary">Start webcam</button>
           <button id="calibrateButton" disabled>Calibrate upright</button>
+          <button id="fullscreenButton" type="button">Full screen video</button>
           <label class="control-select">
             <span>Camera</span>
             <select id="cameraSelect"><option value="">Default camera</option></select>
@@ -119,7 +121,7 @@
         </section>
       </aside>
 
-      <aside class="config-panel" aria-label="Posture configuration">
+      <aside class="config-panel" id="configPanel" aria-label="Posture configuration">
         <section class="settings" aria-label="Alert settings">
           <h2>Alert settings</h2>
           <label>
