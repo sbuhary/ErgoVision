@@ -24,6 +24,8 @@ const fullscreenButton = document.querySelector("#fullscreenButton");
 const stageFullscreenExit = document.querySelector("#stageFullscreenExit");
 const settingsToggle = document.querySelector("#settingsToggle");
 const settingsClose = document.querySelector("#settingsClose");
+const themeToggle = document.querySelector("#themeToggle");
+const themeToggleText = document.querySelector("#themeToggleText");
 const configPanel = document.querySelector("#configPanel");
 const cameraSelect = document.querySelector("#cameraSelect");
 const soundToggle = document.querySelector("#soundToggle");
@@ -118,6 +120,7 @@ let lastNotificationAt = 0;
 let settingsCollapsed = true;
 let settingsDrawerOpen = false;
 let stageFocusMode = false;
+let themeMode = "dark";
 const sessionStats = {
   lastAt: 0,
   goodMs: 0,
@@ -157,6 +160,7 @@ document.addEventListener("fullscreenchange", () => {
 });
 stageStartButton.addEventListener("click", startCamera);
 stageSettingsButton.addEventListener("click", openSettingsDrawer);
+themeToggle.addEventListener("click", toggleTheme);
 
 startButton.addEventListener("click", async () => {
   if (stream) {
@@ -221,6 +225,8 @@ resetSettingsButton.addEventListener("click", () => {
   volumeSlider.value = "35";
   toastToggle.value = "on";
   notificationToggle.value = "off";
+  themeMode = "dark";
+  applyTheme();
   settingsCollapsed = true;
   settingsDrawerOpen = false;
   breakToggle.value = "off";
@@ -604,6 +610,9 @@ function loadSavedState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
 
+    if (saved.theme === "light" || saved.theme === "dark") themeMode = saved.theme;
+    applyTheme();
+
     if (saved.soundEnabled != null) soundToggle.checked = Boolean(saved.soundEnabled);
     if (saved.hideVideo != null) hideVideoToggle.checked = Boolean(saved.hideVideo);
     if (saved.soundPattern) soundPattern.value = saved.soundPattern;
@@ -648,6 +657,7 @@ function saveState() {
 
 function getCurrentState() {
   return {
+    theme: themeMode,
     soundEnabled: soundToggle.checked,
     hideVideo: hideVideoToggle.checked,
     soundPattern: soundPattern.value,
@@ -673,6 +683,20 @@ function getCurrentState() {
   };
 }
 
+function toggleTheme() {
+  themeMode = themeMode === "dark" ? "light" : "dark";
+  applyTheme();
+  saveState();
+}
+
+function applyTheme() {
+  const isLight = themeMode === "light";
+  document.body.classList.toggle("theme-light", isLight);
+  document.body.classList.toggle("theme-dark", !isLight);
+  themeToggle.setAttribute("aria-pressed", String(isLight));
+  themeToggleText.textContent = isLight ? "Light" : "Dark";
+  themeToggle.title = isLight ? "Switch to dark theme" : "Switch to light theme";
+}
 function calculateTotal(scores) {
   const enabledEntries = Object.entries(metricWeights).filter(([key]) => isMetricEnabled(key));
   if (enabledEntries.length === 0) return 100;

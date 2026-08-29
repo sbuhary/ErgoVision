@@ -24,7 +24,7 @@ The app runs fully in the browser, uses MediaPipe Pose Landmarker for pose detec
 - Camera selector for switching between laptop and external webcams.
 - Session stats for good posture time, poor posture time, alert count, and longest poor-posture streak.
 - Reset calibration, reset settings, export settings, and import settings.
-- Responsive dark UI with favicon/logo support.
+- Responsive light/dark UI with a persisted theme switch and favicon/logo support.
 
 ## Privacy
 
@@ -35,7 +35,7 @@ The MediaPipe JavaScript bundle, WASM runtime, and pose model are loaded from CD
 - `https://cdn.jsdelivr.net`
 - `https://storage.googleapis.com`
 
-Calibration, alert settings, notification preferences, enabled indicators, break reminder state, selected camera, hide-video state, and distance settings are stored locally in the browser with `localStorage` under `ergovision-settings-v1`. They persist after refresh or relaunch on the same browser, device, URL, and port.
+Calibration, alert settings, notification preferences, theme preference, enabled indicators, break reminder state, selected camera, hide-video state, and distance settings are stored locally in the browser with `localStorage` under `ergovision-settings-v1`. They persist after refresh or relaunch on the same browser, device, URL, and port.
 
 ## Run Locally
 
