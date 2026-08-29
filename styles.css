@@ -199,8 +199,7 @@ button {
   pointer-events: auto;
 }
 
-.app-shell.settings-collapsed
-.config-panel {
+.app-shell.settings-collapsed .config-panel {
   position: fixed;
   top: 10px;
   right: 12px;
@@ -213,8 +212,7 @@ button {
   transition: transform 180ms ease, opacity 180ms ease;
 }
 
-.app-shell.settings-collapsed.settings-open
-.config-panel {
+.app-shell.settings-collapsed.settings-open .config-panel {
   transform: translateX(0);
   pointer-events: auto;
   opacity: 1;
@@ -501,6 +499,14 @@ button.primary {
 .guidance,
 .settings,
 .stats-panel,
+.metrics article {
+  border: 1px solid rgba(67, 83, 102, 0.72);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 36%), var(--panel-2);
+  padding: 8px;
+}
+
+.score-panel,
 .metrics-header {
   display: flex;
   align-items: center;
@@ -508,7 +514,6 @@ button.primary {
   gap: 8px;
   min-width: 0;
 }
-
 .metrics-header h2 {
   margin-bottom: 0;
   font-size: 0.88rem;
@@ -519,18 +524,10 @@ button.primary {
   gap: 6px;
 }
 
-.metrics-actions
-button {
+.metrics-actions button {
   height: 28px;
   padding: 0 9px;
   font-size: 0.72rem;
-}
-
-.metrics article {
-  border: 1px solid rgba(67, 83, 102, 0.72);
-  border-radius: var(--radius);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 36%), var(--panel-2);
-  padding: 8px;
 }
 
 .score-panel { min-height: 0; }
@@ -757,8 +754,7 @@ input[type="range"] { accent-color: var(--accent); }
 }
 @media (max-width: 1280px) {
   .app-shell { grid-template-columns: minmax(0, 1fr) 350px 340px; }
-
-.app-shell.settings-collapsed { grid-template-columns: minmax(0, 1fr) 360px; }
+  .app-shell.settings-collapsed { grid-template-columns: minmax(0, 1fr) 360px; }
   .control-select select { min-width: 210px; }
 }
 
@@ -769,8 +765,7 @@ input[type="range"] { accent-color: var(--accent); }
     min-height: calc(100vh - 34px);
     grid-template-columns: minmax(0, 1fr) 360px;
   }
-
-.config-panel { grid-column: 1 / -1; overflow: visible; }
+  .config-panel { grid-column: 1 / -1; overflow: visible; }
   .settings { grid-template-columns: repeat(4, minmax(0, 1fr)); height: auto; }
   .settings-header,
   .settings-note { grid-column: 1 / -1; }
@@ -779,8 +774,7 @@ input[type="range"] { accent-color: var(--accent); }
 
 @media (max-width: 860px) {
   .app-shell,
-
-.app-shell.settings-collapsed { grid-template-columns: 1fr; }
+  .app-shell.settings-collapsed { grid-template-columns: 1fr; }
   .workbench { min-height: 70vh; }
   .inspector { grid-template-rows: none; overflow: visible; }
   .settings { grid-template-columns: 1fr 1fr; }
@@ -791,15 +785,14 @@ input[type="range"] { accent-color: var(--accent); }
   .app-shell { padding: 10px; }
   .workbench,
   .inspector,
-
-.config-panel { padding: 12px; }
+  .config-panel { padding: 12px; }
   .topbar { align-items: flex-start; flex-direction: column; }
   .brand-mark { width: 40px; height: 40px; }
   .status-group { justify-content: stretch; width: 100%; }
   .status-pill { flex: 1; min-width: 0; }
-  .metrics { grid-template-rows: none; grid-auto-rows: auto; }
-  .metrics article { grid-template-columns: 1fr; gap: 8px; }
   .controls { flex-wrap: wrap; justify-content: flex-start; }
   .control-group, .device-controls { flex: 1 1 100%; max-width: none; }
+  .metrics { grid-template-rows: none; grid-auto-rows: auto; }
+  .metrics article { grid-template-columns: 1fr; gap: 8px; }
   .settings { grid-template-columns: 1fr; }
 }
