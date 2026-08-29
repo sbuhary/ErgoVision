@@ -165,3 +165,9 @@ If the app shows **Vision model unavailable**, check whether the browser, firewa
 This is not medical advice or a clinical ergonomic assessment. It is a development prototype for posture feedback.
 
 Pose quality depends on lighting, webcam placement, framing, clothing contrast, and whether the head and shoulders are visible.
+
+## License
+
+This project's source code is licensed under the [MIT License](LICENSE).
+
+Third-party libraries, runtime files, and models loaded by the app remain governed by their respective upstream licenses and terms.
