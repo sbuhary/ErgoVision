@@ -102,13 +102,13 @@ your-username.github.io
 For a project site URL like:
 
 ```text
-https://your-username.github.io/ai-posture/
+https://your-username.github.io/ErgoVision/
 ```
 
 name the repository:
 
 ```text
-ai-posture
+ErgoVision
 ```
 
 ## Browser Permissions
