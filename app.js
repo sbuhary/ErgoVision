@@ -52,6 +52,7 @@ const minDistanceInput = document.querySelector("#minDistanceInput");
 const calibrateDistanceButton = document.querySelector("#calibrateDistanceButton");
 const toastToggle = document.querySelector("#toastToggle");
 const notificationToggle = document.querySelector("#notificationToggle");
+const notificationStatus = document.querySelector("#notificationStatus");
 const toastRegion = document.querySelector("#toastRegion");
 const modelStatus = document.querySelector("#modelStatus");
 const stageEmpty = document.querySelector("#stageEmpty");
@@ -193,6 +194,7 @@ notificationToggle.addEventListener("change", async () => {
 });
 
 resetCalibrationButton.addEventListener("click", () => {
+  if (!confirm("Reset saved posture and distance calibration?")) return;
   calibration = undefined;
   saveState();
   cueText.textContent = "Calibration reset. Sit upright and calibrate again when ready.";
@@ -200,6 +202,7 @@ resetCalibrationButton.addEventListener("click", () => {
 });
 
 resetSettingsButton.addEventListener("click", () => {
+  if (!confirm("Reset all saved ErgoVision settings?")) return;
   localStorage.removeItem(STORAGE_KEY);
   soundToggle.checked = false;
   hideVideoToggle.checked = false;
@@ -291,7 +294,7 @@ async function init() {
     modelStatus.textContent = "Model failed";
     alertTitle.textContent = "Could not load pose model";
     alertCopy.textContent =
-      "The prototype needs access to jsDelivr and storage.googleapis.com to load MediaPipe assets.";
+      "The vision model could not load. Allow jsDelivr and storage.googleapis.com, then refresh.";
     stageEmpty.querySelector("strong").textContent = "Vision model unavailable";
     stageEmpty.querySelector("span").textContent =
       "Check internet access or allow the MediaPipe CDN/model URLs, then refresh.";
@@ -322,7 +325,7 @@ async function startCamera() {
     alertPanel.className = "alert-panel bad";
     alertTitle.textContent = "Camera could not start";
     alertCopy.textContent =
-      "Allow webcam permission and run the app from http://localhost or HTTPS.";
+      "Allow camera permission, close other apps using the webcam, and use localhost or HTTPS.";
     console.error(error);
   }
 }
@@ -1020,12 +1023,21 @@ function syncNotificationControl() {
     notificationToggle.value = "off";
     notificationToggle.disabled = true;
     notificationToggle.title = "Browser notifications are not supported here.";
+    if (notificationStatus) notificationStatus.textContent = "Notifications are not supported in this browser.";
     return;
   }
 
   notificationToggle.disabled = false;
   notificationToggle.title = Notification.permission === "denied" ? "Notifications are blocked in browser settings." : "";
   if (Notification.permission === "denied") notificationToggle.value = "off";
+
+  if (Notification.permission === "granted" && notificationToggle.value === "on") {
+    if (notificationStatus) notificationStatus.textContent = "Notifications enabled.";
+  } else if (Notification.permission === "denied") {
+    if (notificationStatus) notificationStatus.textContent = "Notifications blocked in browser settings.";
+  } else {
+    if (notificationStatus) notificationStatus.textContent = "Notifications off.";
+  }
 }
 function showToast(message, type = "warn") {
   if (!toastRegion || toastToggle?.value === "off") return;
