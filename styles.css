@@ -339,6 +339,34 @@ canvas { pointer-events: none; }
   padding: 6px 10px;
   font-size: 0.76rem;
 }
+
+.stage-empty[hidden] {
+  display: none;
+}
+
+body.stage-focus-active {
+  overflow: hidden;
+}
+
+.stage.stage-focus {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  width: 100vw;
+  height: 100vh;
+  border: 0;
+  border-radius: 0;
+}
+
+.stage.stage-focus .stage-fullscreen-exit {
+  display: inline-flex;
+  align-items: center;
+}
+
+.stage.stage-focus video,
+.stage.stage-focus canvas {
+  object-fit: contain;
+}
 .stage-empty strong {
   color: var(--text);
   font-size: 1.6rem;

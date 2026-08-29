@@ -117,6 +117,7 @@ let notificationWasPoor = false;
 let lastNotificationAt = 0;
 let settingsCollapsed = true;
 let settingsDrawerOpen = false;
+let stageFocusMode = false;
 const sessionStats = {
   lastAt: 0,
   goodMs: 0,
@@ -147,7 +148,13 @@ settingsClose.addEventListener("click", () => {
 
 fullscreenButton.addEventListener("click", toggleStageFullscreen);
 stageFullscreenExit.addEventListener("click", toggleStageFullscreen);
-document.addEventListener("fullscreenchange", syncFullscreenControls);
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && stageFocusMode) setStageFocusMode(false);
+});
+document.addEventListener("fullscreenchange", () => {
+  if (document.fullscreenElement) stageFocusMode = false;
+  syncFullscreenControls();
+});
 stageStartButton.addEventListener("click", startCamera);
 stageSettingsButton.addEventListener("click", openSettingsDrawer);
 
@@ -780,21 +787,40 @@ async function refreshCameraList() {
 async function toggleStageFullscreen() {
   const stage = document.querySelector("#stage");
   try {
-    if (!document.fullscreenElement) {
-      await stage.requestFullscreen();
-    } else {
+    if (document.fullscreenElement) {
       await document.exitFullscreen();
+      return;
     }
+
+    if (stageFocusMode) {
+      setStageFocusMode(false);
+      return;
+    }
+
+    if (stage.requestFullscreen) {
+      await stage.requestFullscreen();
+      return;
+    }
+
+    setStageFocusMode(true);
   } catch (error) {
-    cueText.textContent = "Full screen could not be started by this browser.";
-    console.warn("Could not toggle stage fullscreen.", error);
+    setStageFocusMode(!stageFocusMode);
+    console.warn("Falling back to stage focus mode.", error);
   }
 }
 
 function syncFullscreenControls() {
   const isFullscreen = document.fullscreenElement === document.querySelector("#stage");
-  fullscreenButton.textContent = isFullscreen ? "Exit full screen" : "Full screen video";
-  stageFullscreenExit.hidden = !isFullscreen;
+  const isFocused = isFullscreen || stageFocusMode;
+  fullscreenButton.textContent = isFocused ? "Exit full screen" : "Full screen video";
+  stageFullscreenExit.hidden = !isFocused;
+}
+
+function setStageFocusMode(enabled) {
+  stageFocusMode = enabled;
+  document.body.classList.toggle("stage-focus-active", enabled);
+  document.querySelector("#stage").classList.toggle("stage-focus", enabled);
+  syncFullscreenControls();
 }
 
 function openSettingsDrawer() {
