@@ -39,25 +39,65 @@ Calibration, alert settings, notification preferences, enabled indicators, break
 
 ## Run Locally
 
-Serve the folder from localhost:
+Serve the repository from `localhost`, then open the served URL in your browser. A Chromium-based browser is recommended for best WebGL/WASM performance. Browser webcam APIs require `localhost` or HTTPS.
+
+### Python
 
 ```bash
 python -m http.server 5173
 ```
 
-Then open:
+Open:
 
 ```text
 http://localhost:5173
 ```
 
-A Chromium-based browser is recommended for best WebGL/WASM performance. Browser webcam APIs require `localhost` or HTTPS.
+### Node.js with Vite
 
-If you use a dev server such as Vite, make sure the app is opened from the served local URL, for example:
+```bash
+npx vite --host 0.0.0.0 --port 5173
+```
+
+Open:
 
 ```text
 http://localhost:5173
 ```
+
+### Node.js with http-server
+
+```bash
+npx http-server . -p 5173
+```
+
+Open:
+
+```text
+http://localhost:5173
+```
+
+### PHP Built-In Server
+
+```bash
+php -S localhost:5173
+```
+
+Open:
+
+```text
+http://localhost:5173
+```
+
+### VS Code Live Server
+
+Install the **Live Server** extension, right-click `index.html`, and choose **Open with Live Server**. Use the local URL it opens, usually similar to:
+
+```text
+http://127.0.0.1:5500/index.html
+```
+
+Do not open `index.html` directly from the filesystem. Webcam permissions, module loading, and CDN model loading are more reliable from a local server.
 
 ## Typical Use
 
