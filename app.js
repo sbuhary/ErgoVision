@@ -808,7 +808,7 @@ function closeSettingsDrawer() {
 function applySettingsPanelState() {
   appShell.classList.toggle("settings-collapsed", settingsCollapsed);
   appShell.classList.toggle("settings-open", settingsDrawerOpen);
-  settingsToggle.textContent = settingsDrawerOpen ? "Close settings" : "Settings";
+  settingsToggle.textContent = settingsDrawerOpen ? "Close settings" : "Alert settings";
   settingsToggle.setAttribute("aria-expanded", String(settingsDrawerOpen));
   configPanel.setAttribute("aria-hidden", String(!settingsDrawerOpen));
 }
