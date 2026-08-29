@@ -61,6 +61,14 @@ input:focus-visible { box-shadow: var(--focus); }
 
 .workbench,
 .inspector,
+
+.app-shell:not(.camera-active) .inspector {
+  grid-template-rows: 106px 88px 76px minmax(286px, 1fr) 116px;
+}
+
+.app-shell:not(.camera-active) .guidance p {
+  max-width: 34ch;
+}
 .config-panel {
   min-width: 0;
   min-height: 0;
@@ -191,7 +199,8 @@ button {
   pointer-events: auto;
 }
 
-.app-shell.settings-collapsed .config-panel {
+.app-shell.settings-collapsed
+.config-panel {
   position: fixed;
   top: 10px;
   right: 12px;
@@ -204,7 +213,8 @@ button {
   transition: transform 180ms ease, opacity 180ms ease;
 }
 
-.app-shell.settings-collapsed.settings-open .config-panel {
+.app-shell.settings-collapsed.settings-open
+.config-panel {
   transform: translateX(0);
   pointer-events: auto;
   opacity: 1;
@@ -449,6 +459,7 @@ button.primary {
   overflow: hidden;
   padding: 8px;
 }
+
 
 .config-panel {
   display: grid;
@@ -730,7 +741,8 @@ input[type="range"] { accent-color: var(--accent); }
     min-height: calc(100vh - 34px);
     grid-template-columns: minmax(0, 1fr) 360px;
   }
-  .config-panel { grid-column: 1 / -1; overflow: visible; }
+
+.config-panel { grid-column: 1 / -1; overflow: visible; }
   .settings { grid-template-columns: repeat(4, minmax(0, 1fr)); height: auto; }
   .settings-header,
   .settings-note { grid-column: 1 / -1; }
@@ -751,7 +763,8 @@ input[type="range"] { accent-color: var(--accent); }
   .app-shell { padding: 10px; }
   .workbench,
   .inspector,
-  .config-panel { padding: 12px; }
+
+.config-panel { padding: 12px; }
   .topbar { align-items: flex-start; flex-direction: column; }
   .brand-mark { width: 40px; height: 40px; }
   .status-group { justify-content: stretch; width: 100%; }

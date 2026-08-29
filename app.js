@@ -312,6 +312,7 @@ async function startCamera() {
     video.srcObject = stream;
     await video.play();
     stageEmpty.hidden = true;
+    appShell.classList.add("camera-active");
     startButton.textContent = "Stop webcam";
     calibrateButton.disabled = false;
     resizeCanvas();
@@ -333,6 +334,7 @@ function stopCamera(resetUi = true) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (resetUi) {
     stageEmpty.hidden = false;
+    appShell.classList.remove("camera-active");
     startButton.textContent = "Start webcam";
     calibrateButton.disabled = true;
     setWaitingState();
